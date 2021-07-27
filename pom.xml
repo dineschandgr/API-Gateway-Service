@@ -10,10 +10,10 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>sg.ntuchealth.bumblebee</groupId>
-    <artifactId>edge-service</artifactId>
+    <artifactId>gateway-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>edge-service</name>
-    <description>edge service</description>
+    <name>gateway-service</name>
+    <description>gateway service</description>
     
     <dependencies>
         <dependency>
@@ -34,10 +34,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -109,7 +109,7 @@
 
     <build>
         <finalName>
-            edge-service
+            gateway-service
         </finalName>
         <plugins>
             <plugin>

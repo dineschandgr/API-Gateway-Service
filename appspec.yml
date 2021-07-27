@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ec2-user/edge-service
+    destination: /home/ec2-user/gateway-service
 
 permissions:
   - object: /

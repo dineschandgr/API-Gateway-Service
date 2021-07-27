@@ -22,10 +22,7 @@ public class EdgeServiceApplication {
 	@Bean
 	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
 		return builder.routes()
-				.route(r -> r.path("/appointment/resource/optimisation")
-						.filters(spec -> spec.rewritePath("/appointment/resource/optimisation", "/optimisation"))
-						.uri("lb://aggregator-service"))
-				.route(r -> r.path("/user/hello").uri("http://localhost:8081/"))
+				.route(r -> r.path("/profile/**").uri("lb://client-service-yoda"))
 				.build();
 	}
 

@@ -1,7 +1,7 @@
 spring:
   profiles:
     active:
-    - ${BUMBLEBEE_SPRING_PROFILE:dev}
+    - ${YODA_SPRING_PROFILE:dev}
 management:
   endpoints:
     web:
@@ -16,6 +16,9 @@ spring:
     config:
       enabled: false
 
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
 ---
 
 spring:
@@ -27,7 +30,7 @@ spring:
         enabled: true
         service-id: env-service
       username: admin
-      password: ${BUMBLEBEE_CONFIG_SERVER_PASSWORD}
+      password: ${YODA_CONFIG_SERVER_PASSWORD}
     discovery:
       enabled: true
 #    gateway:
@@ -35,40 +38,40 @@ spring:
 #        locator:
 #          enabled: true
 encrypt:
-  key: ${BUMBLEBEE_CONFIG_ENCRYPT_KEY}
+  key: ${YODA_CONFIG_ENCRYPT_KEY}
 
 ---
 
 spring:
   profiles: alpha
-  
+
 eureka:
   instance:
     instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
   client:
     service-url:
-      defaultZone: http://discovery.alpha.crm.ntuchealth/eureka
-      
+      defaultZone: http://finder.alpha.ntuchealth/eureka
+
 ---
 
 spring:
   profiles: uat
-  
+
 eureka:
   instance:
     instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
   client:
     service-url:
-      defaultZone: http://discovery.uat.crm.ntuchealth/eureka
-      
+      defaultZone: http://finder.uat.ntuchealth/eureka
+
 ---
 
 spring:
   profiles: prod
-  
+
 eureka:
   instance:
     instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
   client:
     service-url:
-      defaultZone: http://discovery.crm.ntuchealth/eureka
+      defaultZone: http://finder.ntuchealth/eureka

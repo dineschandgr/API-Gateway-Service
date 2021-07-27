@@ -6,9 +6,9 @@ server:
 spring:
   profiles:
     active:
-    - ${BUMBLEBEE_SPRING_PROFILE:dev}
+      - ${YODA_SPRING_PROFILE:dev}
   application:
-    name: edge-service
+    name: gateway-service
 
 # Disable auto cloud formation
 cloud:
@@ -39,9 +39,6 @@ claims:
     uid: https://claims.identity.nedigital.sg/uid
     associationId: https://claims.identity.nedigital.sg/association/health
     audience: https://api.app.ntuchealth.cloud
-
-client-service:
-  url: http://localhost:9065/profile
 
 link-bridge:
   url:

@@ -34,7 +34,10 @@ public class AuthenticationPreFilter implements GlobalFilter {
         logger.info("Global Pre Filter executed");
 
         ServerHttpRequest request = exchange.getRequest();
-        request.getHeaders().get("Origin").forEach(out -> logger.info("origin headers "+out));
+        List<String> origin = request.getHeaders().get("Origin");
+        if (origin != null) {
+            origin.forEach(out -> logger.info("origin headers "+out));
+        }
 
         if (this.isAuthMissing(request))
             return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
@@ -44,9 +47,12 @@ public class AuthenticationPreFilter implements GlobalFilter {
         if (!jwtUtil.isTokenValid(ssoToken))
             return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
 
-        request.getQueryParams().add("AssociationId","");
-
-        return chain.filter(exchange);
+        return chain.filter(
+                exchange.mutate().request(
+                        request.mutate()
+                                .header("AssociationId", "")
+                                .build())
+                        .build());
     }
 
     private String getAuthHeader(ServerHttpRequest request) {

@@ -1,0 +1,144 @@
+image: maven:3.6.1
+
+pipelines:
+    pull-requests: 
+        '**':
+          - step:
+              services:
+                - docker
+              caches:
+                - docker
+                - maven
+              script:
+                - export TESTCONTAINERS_RYUK_DISABLED=true
+                - mvn clean package
+    custom: # Pipelines that can only be triggered manually
+        deployment-to-beta:
+          - step:
+              services:
+                - docker
+              caches:
+                - docker
+                - maven
+              script:
+                - apt-get update
+                - apt-get install -y zip
+                - export BITBUCKET_COMMIT_SHORT=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+                - export TESTCONTAINERS_RYUK_DISABLED=true
+                - mvn clean package
+                - mkdir application
+                - mv target/edge-service.jar application/edge-service-beta-$BITBUCKET_COMMIT_SHORT.jar
+                - mv appspec.yml application/appspec.yml
+                - mv scripts/* application
+                - cd application
+                - zip -r "application-beta-$BITBUCKET_COMMIT_SHORT.zip" *
+                - pipe: atlassian/aws-code-deploy:0.5.2
+                  variables:
+                    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                    AWS_DEFAULT_REGION: 'ap-southeast-1'
+                    S3_BUCKET: 'b3-build-artifacts'
+                    APPLICATION_NAME: 'edge-service'
+                    COMMAND: 'upload'
+                    ZIP_FILE: 'application-beta-$BITBUCKET_COMMIT_SHORT.zip'
+                - pipe: atlassian/aws-code-deploy:0.5.2
+                  variables:
+                    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                    AWS_DEFAULT_REGION: 'ap-southeast-1'
+                    S3_BUCKET: 'b3-build-artifacts'
+                    COMMAND: 'deploy'
+                    APPLICATION_NAME: 'edge-service'
+                    DEPLOYMENT_GROUP: 'beta'
+                    WAIT: 'true'
+                    FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+    branches:
+     '{dev}':
+      - step:
+          services:
+            - docker
+          caches:
+            - docker
+            - maven
+          script:
+            - apt-get update
+            - apt-get install -y zip
+            - export BITBUCKET_COMMIT_SHORT=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+            - export TESTCONTAINERS_RYUK_DISABLED=true
+            - mvn clean package
+            - mkdir application
+            - mv target/edge-service.jar application/edge-service-milestone-$BITBUCKET_COMMIT_SHORT.jar
+            - mv appspec.yml application/appspec.yml
+            - mv scripts/* application
+            - cd application
+            - zip -r "application-milestone-$BITBUCKET_COMMIT_SHORT.zip" *
+            - pipe: atlassian/aws-code-deploy:0.5.2
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                S3_BUCKET: 'b3-build-artifacts'
+                APPLICATION_NAME: 'edge-service'
+                COMMAND: 'upload'
+                ZIP_FILE: 'application-milestone-$BITBUCKET_COMMIT_SHORT.zip'
+            - pipe: atlassian/aws-code-deploy:0.5.2
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                S3_BUCKET: 'b3-build-artifacts'
+                COMMAND: 'deploy'
+                APPLICATION_NAME: 'edge-service'
+                DEPLOYMENT_GROUP: 'alpha'
+                WAIT: 'true'
+                FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+     '{master}':
+      - step:
+          services:
+            - docker
+          caches:
+            - docker
+            - maven
+          script:
+            - export TESTCONTAINERS_RYUK_DISABLED=true
+            - mvn clean package
+     '{release}':
+      - step:
+          services:
+            - docker
+          caches:
+            - docker
+            - maven
+          script:
+            - apt-get update
+            - apt-get install -y zip
+            - export BITBUCKET_COMMIT_SHORT=$(echo $BITBUCKET_COMMIT | cut -c1-7)
+            - export TESTCONTAINERS_RYUK_DISABLED=true
+            - mvn clean package
+            - mkdir application
+            - mv target/edge-service.jar application/edge-service-release-$BITBUCKET_COMMIT_SHORT.jar
+            - mv appspec.yml application/appspec.yml
+            - mv scripts/* application
+            - cd application
+            - zip -r "application-release-$BITBUCKET_COMMIT_SHORT.zip" *
+            - pipe: atlassian/aws-code-deploy:0.5.2
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                S3_BUCKET: 'b3-build-artifacts'
+                APPLICATION_NAME: 'edge-service'
+                COMMAND: 'upload'
+                ZIP_FILE: 'application-release-$BITBUCKET_COMMIT_SHORT.zip'
+            - pipe: atlassian/aws-code-deploy:0.5.2
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'ap-southeast-1'
+                S3_BUCKET: 'b3-build-artifacts'
+                COMMAND: 'deploy'
+                APPLICATION_NAME: 'edge-service'
+                DEPLOYMENT_GROUP: 'production'
+                WAIT: 'true'
+                FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
+    

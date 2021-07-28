@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
+import sg.ntuchealth.yoda.edge.service.model.User;
 import sg.ntuchealth.yoda.edge.util.SSOTokenUtil;
 
 import java.util.List;
@@ -47,10 +48,12 @@ public class AuthenticationPreFilter implements GlobalFilter {
         if (!jwtUtil.isTokenValid(ssoToken))
             return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
 
+        User user = jwtUtil.retrieveUserFromToken();
+
         return chain.filter(
                 exchange.mutate().request(
                         request.mutate()
-                                .header("AssociationId", "")
+                                .header("AssociationId", user.getAssociationID())
                                 .build())
                         .build());
     }

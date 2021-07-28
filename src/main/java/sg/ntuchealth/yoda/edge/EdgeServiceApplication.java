@@ -33,6 +33,11 @@ public class EdgeServiceApplication {
 	}
 
 	@Bean
+	public RestTemplate restTemplateNoLB(ClientHttpRequestFactory factory) {
+		return new RestTemplate(factory);
+	}
+
+	@Bean
 	public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
 		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
 		factory.setConnectTimeout(5000);

@@ -37,7 +37,7 @@ public class LinkIDBridgeService{
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplate restTemplateNoLB;
 
 	@Autowired
 	private CacheClient cacheClient;
@@ -50,7 +50,7 @@ public class LinkIDBridgeService{
 				audience("https://bridge.identity.nedigital.sg").grant_type("client_credentials").build();
 
 		HttpEntity<LinkIdRequest> entity = new HttpEntity<>(linkIdRequest , headers);
-		LinkIdResponse linkIdResponse = restTemplate.postForObject(HTTPS_LINKBRIDGE_TOKEN, entity, LinkIdResponse.class);
+		LinkIdResponse linkIdResponse = restTemplateNoLB.postForObject(HTTPS_LINKBRIDGE_TOKEN, entity, LinkIdResponse.class);
 		LOGGER.info("linkid token obtained from LinkID Bridge API "+linkIdResponse);
 		return linkIdResponse;
 	}
@@ -62,7 +62,7 @@ public class LinkIDBridgeService{
 
 		HttpEntity<String> entity = new HttpEntity<>(uid , headers);
 		String url = HTTPS_LINKBRIDGE_API + "/bridge/user/uid/" + uid;
-		ResponseEntity<UserProfile> res = restTemplate.exchange(url, HttpMethod.GET, entity, UserProfile.class);
+		ResponseEntity<UserProfile> res = restTemplateNoLB.exchange(url, HttpMethod.GET, entity, UserProfile.class);
 
 		return res.getBody();
 	}
@@ -83,7 +83,7 @@ public class LinkIDBridgeService{
 		HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
 		String url = HTTPS_LINKBRIDGE_API + "/bridge/user/uid/" + uid + "/association";
 
-		return restTemplate.exchange(url, HttpMethod.PATCH, entity, UserProfile.class);
+		return restTemplateNoLB.exchange(url, HttpMethod.PATCH, entity, UserProfile.class);
 	}
 
 	/*
@@ -101,7 +101,7 @@ public class LinkIDBridgeService{
 			LocalDateTime expiryDateTime = currentDateTime.plus(Duration.ofSeconds(linkIdResponse.getExpiresIn()));
 			linkIdResponse.setExpiryDateTime(expiryDateTime);
 			LinkIdResponse res = cacheClient.put("token", linkIdResponse);
-			LOGGER.info("Token obtained from LinkId Bridge API "+res.getTokenType());
+			LOGGER.info("Token obtained from LinkId Bridge API " + linkIdResponse.getTokenType());
 		}
 
 		return linkIdResponse.getAccessToken();

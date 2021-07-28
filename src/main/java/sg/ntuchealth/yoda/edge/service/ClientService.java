@@ -15,7 +15,7 @@ import sg.ntuchealth.yoda.edge.service.model.User;
 @Service
 public class ClientService{
 
-	private String HTTP_CLIENT_SERVICE_APPLICABLE = "http://client-service-yoda/";
+	private String HTTP_CLIENT_SERVICE_APPLICABLE = "http://profile-service";
 
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 

@@ -14,9 +14,11 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import sg.ntuchealth.yoda.edge.exception.AssociationNotFoundException;
 import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
 import sg.ntuchealth.yoda.edge.service.model.User;
 import sg.ntuchealth.yoda.edge.util.SSOTokenUtil;
+import sg.ntuchealth.yoda.edge.web.StatusCodes;
 
 import java.util.List;
 
@@ -50,6 +52,10 @@ public class AuthenticationPreFilter implements GlobalFilter {
 
         User user = jwtUtil.retrieveUserFromToken();
 
+        if(user.getAssociationID().isEmpty())
+           //throw new AssociationNotFoundException("Association ID not found in the token");
+            return this.onError(exchange, "Association ID not found in the token", HttpStatus.UNAUTHORIZED);
+
         return chain.filter(
                 exchange.mutate().request(
                         request.mutate()
@@ -65,6 +71,7 @@ public class AuthenticationPreFilter implements GlobalFilter {
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
+        response.setRawStatusCode(StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN.getValue());
         response.getHeaders().add("X-Code",err);
         return response.setComplete();
     }

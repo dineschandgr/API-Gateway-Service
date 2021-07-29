@@ -19,5 +19,6 @@ import lombok.ToString;
 public class LoginResponse implements Serializable {
     private boolean success;
     private String message;
+    private int statusCode;
 
 }

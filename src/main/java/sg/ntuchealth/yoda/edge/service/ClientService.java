@@ -23,7 +23,7 @@ public class ClientService{
 	private RestTemplate restTemplate;
 
 	public ResponseEntity validateUser(String associationId) {
-		String id = UUID.nameUUIDFromBytes( String.valueOf( associationId ).getBytes() ).toString();
+		UUID id = UUID.fromString(String.valueOf(associationId));
 		LOGGER.info("ClientService validateUser id "+id);
 		ResponseEntity response = restTemplate.getForEntity(HTTP_CLIENT_SERVICE_APPLICABLE + "/login/" + id, User.class);
 		return response;

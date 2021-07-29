@@ -13,6 +13,7 @@ import sg.ntuchealth.yoda.edge.exception.ClientNotFoundException;
 import sg.ntuchealth.yoda.edge.service.model.ProfileResponse;
 import sg.ntuchealth.yoda.edge.service.model.User;
 import sg.ntuchealth.yoda.edge.service.model.UserProfile;
+import sg.ntuchealth.yoda.edge.web.StatusCodes;
 
 import java.net.URISyntaxException;
 
@@ -28,18 +29,21 @@ public class UserProfileService {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    public void validateClient(User user) throws Exception {
+    public int validateClient(User user) throws Exception {
     	if (!StringUtils.isEmpty(user.getAssociationID())) {
 			//call clientservice to verify user
 			ResponseEntity responseEntity = clientService.validateUser(user.getAssociationID());
-
+			LOGGER.info("Existing user Login flow");
 			if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
 				LOGGER.error("User does not exist :" + user.getId());
 				throw new ClientNotFoundException("User does not exist :");
 			}
+
+			return StatusCodes.EXISTING_USER.getValue();
 		} else {
 			LOGGER.info("CLient Association does not exist in the DB. calling LinkID Bridge APIs");
 			createUserAndSaveAssociation(user);
+			return StatusCodes.NEW_USER.getValue();
 		}
 	}
 

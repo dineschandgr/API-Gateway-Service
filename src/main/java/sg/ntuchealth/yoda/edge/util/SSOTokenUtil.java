@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import sg.ntuchealth.yoda.edge.exception.TokenExpiredException;
 import sg.ntuchealth.yoda.edge.service.model.User;
 
 import javax.annotation.PostConstruct;
@@ -55,7 +56,7 @@ public class SSOTokenUtil {
 
 			// Check expiration
 			if (jwt.getExpiresAt().before(Calendar.getInstance().getTime()))
-				throw new JwkException("Expired token!");
+				throw new TokenExpiredException("The token has expired");
 
 			//validate audience
 			if (!validateAudience(jwt))

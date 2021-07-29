@@ -39,11 +39,12 @@ public class AuthenticationController {
 		String ssoToken = token.substring(7);
 
 		User user = authenticationManager.authenticate(ssoToken);
-        edgeService.validateClient(user);
+        int statusCode = edgeService.validateClient(user);
 
 		return new ResponseEntity(LoginResponse.builder()
 				.success(true)
 				.message("Token Validation Successful")
+				.statusCode(statusCode)
 				.build(),
 				HttpStatus.ACCEPTED);
 	}

@@ -27,7 +27,7 @@ pipelines:
                 - export TESTCONTAINERS_RYUK_DISABLED=true
                 - mvn clean package
                 - mkdir application
-                - mv target/edge-service.jar application/edge-service-beta-$BITBUCKET_COMMIT_SHORT.jar
+                - mv target/gateway-service.jar application/gateway-service-beta-$BITBUCKET_COMMIT_SHORT.jar
                 - mv appspec.yml application/appspec.yml
                 - mv scripts/* application
                 - cd application
@@ -38,7 +38,7 @@ pipelines:
                     AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                     AWS_DEFAULT_REGION: 'ap-southeast-1'
                     S3_BUCKET: 'b3-build-artifacts'
-                    APPLICATION_NAME: 'edge-service'
+                    APPLICATION_NAME: 'gateway-service'
                     COMMAND: 'upload'
                     ZIP_FILE: 'application-beta-$BITBUCKET_COMMIT_SHORT.zip'
                 - pipe: atlassian/aws-code-deploy:0.5.2
@@ -48,7 +48,7 @@ pipelines:
                     AWS_DEFAULT_REGION: 'ap-southeast-1'
                     S3_BUCKET: 'b3-build-artifacts'
                     COMMAND: 'deploy'
-                    APPLICATION_NAME: 'edge-service'
+                    APPLICATION_NAME: 'gateway-service'
                     DEPLOYMENT_GROUP: 'beta'
                     WAIT: 'true'
                     FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
@@ -67,7 +67,7 @@ pipelines:
             - export TESTCONTAINERS_RYUK_DISABLED=true
             - mvn clean package
             - mkdir application
-            - mv target/edge-service.jar application/edge-service-milestone-$BITBUCKET_COMMIT_SHORT.jar
+            - mv target/gateway-service.jar application/gateway-service-milestone-$BITBUCKET_COMMIT_SHORT.jar
             - mv appspec.yml application/appspec.yml
             - mv scripts/* application
             - cd application
@@ -78,7 +78,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'ap-southeast-1'
                 S3_BUCKET: 'b3-build-artifacts'
-                APPLICATION_NAME: 'edge-service'
+                APPLICATION_NAME: 'gateway-service'
                 COMMAND: 'upload'
                 ZIP_FILE: 'application-milestone-$BITBUCKET_COMMIT_SHORT.zip'
             - pipe: atlassian/aws-code-deploy:0.5.2
@@ -88,7 +88,7 @@ pipelines:
                 AWS_DEFAULT_REGION: 'ap-southeast-1'
                 S3_BUCKET: 'b3-build-artifacts'
                 COMMAND: 'deploy'
-                APPLICATION_NAME: 'edge-service'
+                APPLICATION_NAME: 'gateway-service'
                 DEPLOYMENT_GROUP: 'alpha'
                 WAIT: 'true'
                 FILE_EXISTS_BEHAVIOR: 'OVERWRITE'
@@ -116,7 +116,7 @@ pipelines:
             - export TESTCONTAINERS_RYUK_DISABLED=true
             - mvn clean package
             - mkdir application
-            - mv target/edge-service.jar application/edge-service-release-$BITBUCKET_COMMIT_SHORT.jar
+            - mv target/gateway-service.jar application/gateway-service-release-$BITBUCKET_COMMIT_SHORT.jar
             - mv appspec.yml application/appspec.yml
             - mv scripts/* application
             - cd application
@@ -127,7 +127,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'ap-southeast-1'
                 S3_BUCKET: 'b3-build-artifacts'
-                APPLICATION_NAME: 'edge-service'
+                APPLICATION_NAME: 'gateway-service'
                 COMMAND: 'upload'
                 ZIP_FILE: 'application-release-$BITBUCKET_COMMIT_SHORT.zip'
             - pipe: atlassian/aws-code-deploy:0.5.2
@@ -137,7 +137,7 @@ pipelines:
                 AWS_DEFAULT_REGION: 'ap-southeast-1'
                 S3_BUCKET: 'b3-build-artifacts'
                 COMMAND: 'deploy'
-                APPLICATION_NAME: 'edge-service'
+                APPLICATION_NAME: 'gateway-service'
                 DEPLOYMENT_GROUP: 'production'
                 WAIT: 'true'
                 FILE_EXISTS_BEHAVIOR: 'OVERWRITE'

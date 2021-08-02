@@ -2,13 +2,10 @@ package sg.ntuchealth.yoda.edge.service.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
-
+import java.util.Map;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import lombok.*;
 
 @Data
 @Builder
@@ -17,36 +14,36 @@ import java.util.UUID;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class UserProfile {
 
-	@NotNull(message = "Uid cannot be null")
-	private String uid;
+  @NotNull(message = "Uid cannot be null")
+  private String uid;
 
-	@NotBlank(message = "Name cannot be empty")
-	private String name;
+  @NotBlank(message = "Name cannot be empty")
+  private String name;
 
-	private String phoneNumber;
+  private String phoneNumber;
 
-	private String countryCode;
+  private String countryCode;
 
-	@NotNull(message = "Email cannot be null")
-	private String email;
+  @NotNull(message = "Email cannot be null")
+  private String email;
 
-	private String phoneNumberLastVerified;
+  private String phoneNumberLastVerified;
 
-	private String emailLastVerified;
+  private String emailLastVerified;
 
-	private String dateOfBirth;
+  private String dateOfBirth;
 
-	private String preferences;
+  private String preferences;
 
-	private String memberships;
+  private String memberships;
 
-	private String myinfoLastVerified;
+  private String myinfoLastVerified;
 
-	private String createdAt;
+  private String createdAt;
 
-	private String updatedAt;
+  private String updatedAt;
 
-	Map<String, Object> association;
+  Map<String, Object> association;
 
-	Map<String, Object> metadata;
+  Map<String, Object> metadata;
 }

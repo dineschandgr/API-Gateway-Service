@@ -9,12 +9,10 @@ import sg.ntuchealth.yoda.edge.util.SSOTokenUtil;
 @Component
 public class AuthenticationManager {
 
-	@Autowired
-	private SSOTokenUtil ssoTokenUtil;
+  @Autowired private SSOTokenUtil ssoTokenUtil;
 
-	public User authenticate(String token) throws JwkException {
-		ssoTokenUtil.isTokenValid(token);
-		return ssoTokenUtil.retrieveUserFromToken();
-	}
-
+  public User authenticate(String token) throws JwkException {
+    ssoTokenUtil.isTokenValid(token);
+    return ssoTokenUtil.retrieveUserFromToken();
+  }
 }

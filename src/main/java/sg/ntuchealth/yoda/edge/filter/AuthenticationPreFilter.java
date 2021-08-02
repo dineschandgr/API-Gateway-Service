@@ -6,78 +6,67 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import sg.ntuchealth.yoda.edge.exception.AssociationNotFoundException;
-import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
+import sg.ntuchealth.yoda.edge.filter.exceptions.AssocationNotFoundGlobalException;
+import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
+import sg.ntuchealth.yoda.edge.service.UserService;
 import sg.ntuchealth.yoda.edge.service.model.User;
-import sg.ntuchealth.yoda.edge.util.SSOTokenUtil;
 import sg.ntuchealth.yoda.edge.web.StatusCodes;
-
-import java.util.List;
 
 @Component
 public class AuthenticationPreFilter implements GlobalFilter {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private SSOTokenUtil jwtUtil;
+  @Autowired private TokenUtil jwtUtil;
 
-    @SneakyThrows
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+  @Autowired private UserService userService;
 
-        logger.info("Global Pre Filter executed");
+  @SneakyThrows
+  @Override
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-        ServerHttpRequest request = exchange.getRequest();
-        List<String> origin = request.getHeaders().get("Origin");
-        if (origin != null) {
-            origin.forEach(out -> logger.info("origin headers "+out));
-        }
+    logger.info("Global Pre Filter executed");
 
-        if (this.isAuthMissing(request))
-            return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+    ServerHttpRequest request = exchange.getRequest();
+    final String token = this.validateAndRetrieveAuthHeader(request);
 
-        final String token = this.getAuthHeader(request);
-        String ssoToken = token.substring(7);
-        if (!jwtUtil.isTokenValid(ssoToken))
-            return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
+    User user = jwtUtil.validateTokenAndRetrieveUser(token);
 
-        User user = jwtUtil.retrieveUserFromToken();
+    logger.info("Token Validation successful and request is being routed");
 
-        if(user.getAssociationID().isEmpty())
-           //throw new AssociationNotFoundException("Association ID not found in the token");
-            return this.onError(exchange, "Association ID not found in the token", HttpStatus.UNAUTHORIZED);
+    validateUserAssociation(user);
 
-        return chain.filter(
-                exchange.mutate().request(
-                        request.mutate()
-                                .header("AssociationId", user.getAssociationID())
-                                .build())
-                        .build());
+    return chain.filter(
+        exchange
+            .mutate()
+            .request(request.mutate().header("AssociationId", user.getAssociationID()).build())
+            .build());
+  }
+
+  private String validateAndRetrieveAuthHeader(ServerHttpRequest request) {
+    if (!request.getHeaders().containsKey("Authorization"))
+      throw new AuthorizationGlobalException(
+          HttpStatus.UNAUTHORIZED, StatusCodes.AUTHORIZATION_ERROR.getMessage());
+
+    return request.getHeaders().getOrEmpty("Authorization").get(0);
+  }
+
+  private void validateUserAssociation(User user) {
+    if (StringUtils.isEmpty(user.getAssociationID())) {
+      if (userService.isUserAssociated(user)) {
+        throw new AssocationNotFoundGlobalException(
+            HttpStatus.UNAUTHORIZED, StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN.getMessage());
+      } else {
+        throw new AssocationNotFoundGlobalException(
+            HttpStatus.UNAUTHORIZED,
+            StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN_AND_DB.getMessage());
+      }
     }
-
-    private String getAuthHeader(ServerHttpRequest request) {
-        return request.getHeaders().getOrEmpty("Authorization").get(0);
-    }
-
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
-        response.setRawStatusCode(StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN.getValue());
-        response.getHeaders().add("X-Code",err);
-        return response.setComplete();
-    }
-
-    private boolean isAuthMissing(ServerHttpRequest request) {
-        return !request.getHeaders().containsKey("Authorization");
-    }
-
+  }
 }

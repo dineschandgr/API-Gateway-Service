@@ -19,12 +19,6 @@ cloud:
 
 spring:
   profiles: dev
-  default-password: G7762#edswss09^
-  password-reset-link:  http://alpha-bumblebee-814486800.ap-southeast-1.elb.amazonaws.com/login/reset
-  notification-queue: dev-email-queue
-jwt:
-  secret: n2r5u8x/A%D*G-KaPdSgVkYp3s6v9y$B&E(H+MbQeThWmZq4t7w!z%C*F-J@NcRf
-  expiration: 864000000
 
 linkid:
   client-id: RwKVocoUDkWebIUHmPFO6AR1Ya6AVpRc
@@ -48,14 +42,25 @@ link-bridge:
 ---
 
 spring:
-  profiles: alpha, uat, prod
-  default-password: ${user.default.password}
-  password-reset-link:  ${user.password.reset-link}
-  notification-queue: ${email.queue.name}
-jwt:
-  secret: ${security.jwt.secret}
-  expiration: ${security.jwt.expiration}
+  profiles: alpha, uat
 
 
+linkid:
+  client-id:
+  client-secret:
 
+jwks:
+  url:
+    pre-prod: https://preprod-auth.fairprice.com.sg/
+    prod: https://auth.fairprice.com.sg/
+claims:
+  identity:
+    uid: https://claims.identity.nedigital.sg/uid
+    associationId: https://claims.identity.nedigital.sg/association/health
+    audience: https://api.app.ntuchealth.cloud
+
+link-bridge:
+  url:
+    token: https://preprod-m2mauth.nedigital.sg/oauth/token
+    api: https://preprod-identity.nedigital.sg
 

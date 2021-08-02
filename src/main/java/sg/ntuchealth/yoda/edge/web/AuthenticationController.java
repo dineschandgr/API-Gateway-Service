@@ -1,57 +1,51 @@
 package sg.ntuchealth.yoda.edge.web;
 
 import com.auth0.jwk.JwkException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 import sg.ntuchealth.yoda.edge.service.AuthenticationManager;
-import sg.ntuchealth.yoda.edge.service.UserProfileService;
+import sg.ntuchealth.yoda.edge.service.UserService;
 import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
 import sg.ntuchealth.yoda.edge.service.model.User;
 import sg.ntuchealth.yoda.edge.util.SSOTokenUtil;
-
-import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
 
-	@Autowired
-	private SSOTokenUtil jwtUtil;
+  @Autowired private SSOTokenUtil jwtUtil;
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+  @Autowired private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private UserProfileService edgeService;
+  @Autowired private UserService userService;
 
-	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+  /*
+  Validiate the JWT received from SSO
+  */
+  @PostMapping("validate")
+  public ResponseEntity<LoginResponse> login(@RequestHeader(value = "Authorization") String token)
+      throws JwkException, JsonProcessingException {
+    String ssoToken = token.substring(7);
 
-	/*
-		Validiate the JWT received from SSO
-	 */
-	@PostMapping("validate")
-	public ResponseEntity<LoginResponse> login(@RequestHeader(value = "Authorization") String token) throws Exception {
-		String ssoToken = token.substring(7);
+    User user = authenticationManager.authenticate(ssoToken);
+    int statusCode = userService.validateClient(user);
 
-		User user = authenticationManager.authenticate(ssoToken);
-        int statusCode = edgeService.validateClient(user);
+    return new ResponseEntity<>(
+        LoginResponse.builder()
+            .success(true)
+            .message("Token Validation Successful")
+            .statusCode(statusCode)
+            .build(),
+        HttpStatus.ACCEPTED);
+  }
 
-		return new ResponseEntity(LoginResponse.builder()
-				.success(true)
-				.message("Token Validation Successful")
-				.statusCode(statusCode)
-				.build(),
-				HttpStatus.ACCEPTED);
-	}
-
-	@GetMapping("logout")
-	public ResponseEntity<LoginResponse> logout(@RequestHeader(value = "Authorization") String token) {
-		//blacklist the JWT on logout
-		return null;
-	}
+  @GetMapping("logout")
+  public ResponseEntity<LoginResponse> logout(
+      @RequestHeader(value = "Authorization") String token) {
+    // blacklist the JWT on logout
+    return null;
+  }
 }

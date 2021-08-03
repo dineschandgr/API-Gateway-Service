@@ -11,7 +11,7 @@ import sg.ntuchealth.yoda.edge.service.model.LinkIdResponse;
 @Component
 public class CacheClient {
 
-  public static final String LINKIDTOKEN = "LINK_ID_TOKEN";
+  public static final String LINK_ID_TOKEN = "LINKIDTOKEN";
   private final HazelcastInstance hazelcastInstance =
       Hazelcast.newHazelcastInstance(createConfig());
 
@@ -22,16 +22,16 @@ public class CacheClient {
   }
 
   private MapConfig mapConfig() {
-    return new MapConfig(LINKIDTOKEN);
+    return new MapConfig(LINK_ID_TOKEN);
   }
 
   public LinkIdResponse put(String key, LinkIdResponse linkIdResponse) {
-    IMap<String, LinkIdResponse> map = hazelcastInstance.getMap(LINKIDTOKEN);
+    IMap<String, LinkIdResponse> map = hazelcastInstance.getMap(LINK_ID_TOKEN);
     return map.put(key, linkIdResponse);
   }
 
   public LinkIdResponse get(String key) {
-    IMap<String, LinkIdResponse> map = hazelcastInstance.getMap(LINKIDTOKEN);
+    IMap<String, LinkIdResponse> map = hazelcastInstance.getMap(LINK_ID_TOKEN);
     return map.get(key);
   }
 }

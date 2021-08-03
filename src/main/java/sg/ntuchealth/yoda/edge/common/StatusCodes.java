@@ -1,4 +1,4 @@
-package sg.ntuchealth.yoda.edge.web;
+package sg.ntuchealth.yoda.edge.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -9,9 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import sg.ntuchealth.yoda.edge.common.CommonUtils;
 import sg.ntuchealth.yoda.edge.config.CacheClient;
 import sg.ntuchealth.yoda.edge.service.model.LinkIdRequest;
 import sg.ntuchealth.yoda.edge.service.model.LinkIdResponse;
@@ -40,8 +44,8 @@ public class LinkIDBridgeService {
 
   private LinkIdResponse authenticateClient() {
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
+
     LinkIdRequest linkIdRequest =
         LinkIdRequest.builder()
             .client_id(clientId)
@@ -74,10 +78,11 @@ public class LinkIDBridgeService {
 
   public ResponseEntity<UserProfile> saveAssociation(String uid, String associationId)
       throws JsonProcessingException {
+
     LOGGER.info("In saveAssociation API: {} ", uid);
+
+    HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
     String token = retrieveAccessToken();
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setBearerAuth(token);
 
     ObjectMapper mapper = new ObjectMapper();

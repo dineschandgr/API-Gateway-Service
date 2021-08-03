@@ -9,12 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.exception.AssociationNotSavedinLinkIDException;
 import sg.ntuchealth.yoda.edge.exception.ClientNotFoundException;
 import sg.ntuchealth.yoda.edge.service.model.ProfileResponse;
 import sg.ntuchealth.yoda.edge.service.model.User;
 import sg.ntuchealth.yoda.edge.service.model.UserProfile;
-import sg.ntuchealth.yoda.edge.web.StatusCodes;
 
 @Service
 @Transactional
@@ -28,7 +28,6 @@ public class UserService {
 
   public int validateClient(User user) throws JsonProcessingException {
     if (!StringUtils.isEmpty(user.getAssociationID())) {
-      // call clientservice to verify user
       ResponseEntity<String> responseEntity = profileService.validateUser(user.getAssociationID());
       LOGGER.info("Existing user Login flow");
       if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {

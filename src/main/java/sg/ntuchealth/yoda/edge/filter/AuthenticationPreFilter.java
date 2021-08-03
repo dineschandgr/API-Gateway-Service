@@ -12,16 +12,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AssocationNotFoundGlobalException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
 import sg.ntuchealth.yoda.edge.service.UserService;
 import sg.ntuchealth.yoda.edge.service.model.User;
-import sg.ntuchealth.yoda.edge.web.StatusCodes;
 
 @Component
 public class AuthenticationPreFilter implements GlobalFilter {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
   @Autowired private TokenUtil jwtUtil;
 
@@ -31,14 +31,14 @@ public class AuthenticationPreFilter implements GlobalFilter {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-    logger.info("Global Pre Filter executed");
+    LOGGER.info("Global Pre Filter executed");
 
     ServerHttpRequest request = exchange.getRequest();
     final String token = this.validateAndRetrieveAuthHeader(request);
 
     User user = jwtUtil.validateTokenAndRetrieveUser(token);
 
-    logger.info("Token Validation successful and request is being routed");
+    LOGGER.info("Token Validation successful and request is being routed");
 
     validateUserAssociation(user);
 

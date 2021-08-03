@@ -1,7 +1,8 @@
 package sg.ntuchealth.yoda.edge.service.model;
 
 import java.util.List;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Builder
 @Data

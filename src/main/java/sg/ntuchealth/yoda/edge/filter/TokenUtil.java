@@ -14,10 +14,10 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.TokenExpiredGlobalException;
 import sg.ntuchealth.yoda.edge.service.model.User;
-import sg.ntuchealth.yoda.edge.web.StatusCodes;
 
 @Component
 public class TokenUtil {
@@ -86,9 +86,5 @@ public class TokenUtil {
 
   public Boolean isTokenExpired() {
     return jwt.getExpiresAt().before(Calendar.getInstance().getTime());
-  }
-
-  public Boolean validateScope() {
-    return false;
   }
 }

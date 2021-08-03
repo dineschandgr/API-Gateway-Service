@@ -21,8 +21,8 @@ spring:
   profiles: dev
 
 linkid:
-  client-id: RwKVocoUDkWebIUHmPFO6AR1Ya6AVpRc
-  client-secret: SaaLsDhI7mR9DLKNHxDbDaRk6G5Brst7WKdZBRrrEgYyifusVLsuQD2jRvjr-PIN
+  client-id: ${linkid.client.id}
+  client-secret: ${linkid.client.secret}
 
 jwks:
   url:

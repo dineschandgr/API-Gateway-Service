@@ -81,8 +81,4 @@ public class SSOTokenUtil {
   public Boolean isTokenExpired() {
     return jwt.getExpiresAt().before(Calendar.getInstance().getTime());
   }
-
-  public Boolean validateScope() {
-    return false;
-  }
 }

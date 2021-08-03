@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
-import sg.ntuchealth.yoda.edge.web.StatusCodes;
+import sg.ntuchealth.yoda.edge.common.StatusCodes;
 
 @Component
 @Getter

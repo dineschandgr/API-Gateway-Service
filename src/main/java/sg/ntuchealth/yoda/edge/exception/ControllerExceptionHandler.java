@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
-import sg.ntuchealth.yoda.edge.web.StatusCodes;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {

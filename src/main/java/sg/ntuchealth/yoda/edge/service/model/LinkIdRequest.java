@@ -1,6 +1,8 @@
 package sg.ntuchealth.yoda.edge.service.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Builder

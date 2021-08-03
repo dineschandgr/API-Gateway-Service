@@ -1,7 +1,11 @@
 package sg.ntuchealth.yoda.edge.service.model;
 
 import java.util.UUID;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Data

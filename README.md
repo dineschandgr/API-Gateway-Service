@@ -4,26 +4,15 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* This repository is for the gateway service for yoda
+* The gateway handles the user authentication
+* It is the single point of contact for the Front End clients and any requests to other services pass through this
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* Install maven and java in your machine
+* Clone the repo to download all the files
+* Go to the root folder of the downloaded code
+* Run the command mvn spring-boot:run
+* The server will be up and running in the port localhost:8080
 
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact

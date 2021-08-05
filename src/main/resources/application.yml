@@ -21,8 +21,8 @@ spring:
   profiles: dev
 
 linkid:
-  client-id: ${linkid.client.id}
-  client-secret: ${linkid.client.secret}
+  client-id:
+  client-secret:
 
 jwks:
   url:
@@ -43,11 +43,6 @@ link-bridge:
 
 spring:
   profiles: alpha, uat
-
-
-linkid:
-  client-id:
-  client-secret:
 
 jwks:
   url:

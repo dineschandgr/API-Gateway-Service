@@ -49,7 +49,8 @@ public class AuthenticationController {
   @GetMapping("logout")
   public ResponseEntity<LoginResponse> logout(
       @RequestHeader(value = "Authorization") String token) {
-    // blacklist the JWT on logout
+
+    // TODO: 5/8/21 // blacklist the JWT on logout
     return null;
   }
 }

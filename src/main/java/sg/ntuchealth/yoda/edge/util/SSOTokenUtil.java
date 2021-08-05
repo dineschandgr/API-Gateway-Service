@@ -45,8 +45,6 @@ public class SSOTokenUtil {
     jwt = JWT.decode(token);
 
     // Check expiration
-
-    // Check expiration
     if (Boolean.TRUE.equals(isTokenExpired()))
       throw new TokenExpiredException("The token has expired");
 

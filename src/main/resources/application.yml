@@ -42,20 +42,7 @@ link-bridge:
 ---
 
 spring:
-  profiles: alpha, uat
+  profiles: alpha, uat, prod
 
-jwks:
-  url:
-    pre-prod: https://preprod-auth.fairprice.com.sg/
-    prod: https://auth.fairprice.com.sg/
-claims:
-  identity:
-    uid: https://claims.identity.nedigital.sg/uid
-    associationId: https://claims.identity.nedigital.sg/association/health
-    audience: https://api.app.ntuchealth.cloud
 
-link-bridge:
-  url:
-    token: https://preprod-m2mauth.nedigital.sg/oauth/token
-    api: https://preprod-identity.nedigital.sg
 

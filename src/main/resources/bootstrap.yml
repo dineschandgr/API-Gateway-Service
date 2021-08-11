@@ -1,0 +1,80 @@
+spring:
+  profiles:
+    active:
+    - ${BUMBLEBEE_SPRING_PROFILE:dev}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,shutdown
+  endpoint:
+    shutdown:
+      enabled: true
+
+---
+
+spring:
+  profiles: dev
+  cloud:
+    config:
+      enabled: false
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}    
+---
+
+spring:
+  profiles: prod, uat, alpha
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        enabled: true
+        service-id: env-service
+      username: admin
+      password: ${BUMBLEBEE_CONFIG_SERVER_PASSWORD}
+    discovery:
+      enabled: true
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+encrypt:
+  key: ${BUMBLEBEE_CONFIG_ENCRYPT_KEY}
+
+---
+
+spring:
+  profiles: alpha
+  
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  client:
+    service-url:
+      defaultZone: http://discovery.alpha.crm.ntuchealth/eureka
+      
+---
+
+spring:
+  profiles: uat
+  
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  client:
+    service-url:
+      defaultZone: http://discovery.uat.crm.ntuchealth/eureka
+      
+---
+
+spring:
+  profiles: prod
+  
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  client:
+    service-url:
+      defaultZone: http://discovery.crm.ntuchealth/eureka

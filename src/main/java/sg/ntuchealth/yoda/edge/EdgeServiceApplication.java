@@ -1,7 +1,7 @@
 package sg.ntuchealth.yoda.edge;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.Collections;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -11,12 +11,11 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -60,16 +59,17 @@ public class EdgeServiceApplication {
 
   @Profile({"alpha", "uat"})
   @Bean
-  CorsConfigurationSource corsConfiguration() {
-    CorsConfiguration corsConfig = new CorsConfiguration();
-    corsConfig.applyPermitDefaultValues();
-    corsConfig.setAllowedMethods(
-        Arrays.stream(HttpMethod.values()).map(HttpMethod::name).collect(Collectors.toList()));
+  public CorsWebFilter corsWebFilter() {
 
-    corsConfig.setAllowedOrigins(Arrays.asList("*"));
+    final CorsConfiguration corsConfig = new CorsConfiguration();
+    corsConfig.setAllowedOrigins(Collections.singletonList("*"));
+    corsConfig.setMaxAge(3600L);
+    corsConfig.setAllowedMethods(Arrays.asList("GET", "POST"));
+    corsConfig.addAllowedHeader("*");
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", corsConfig);
-    return source;
+
+    return new CorsWebFilter(source);
   }
 }

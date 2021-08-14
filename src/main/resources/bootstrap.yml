@@ -1,12 +1,16 @@
 spring:
   profiles:
     active:
-    - ${YODA_SPRING_PROFILE:dev}
+    - ${BUMBLEBEE_SPRING_PROFILE:dev}
+
 management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, info
+        include: health,info,shutdown
+  endpoint:
+    shutdown:
+      enabled: true
 
 ---
 
@@ -15,10 +19,9 @@ spring:
   cloud:
     config:
       enabled: false
-
 eureka:
   instance:
-    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}    
 ---
 
 spring:
@@ -30,7 +33,7 @@ spring:
         enabled: true
         service-id: env-service
       username: admin
-      password: ${YODA_CONFIG_SERVER_PASSWORD}
+      password: ${BUMBLEBEE_CONFIG_SERVER_PASSWORD}
     discovery:
       enabled: true
 #    gateway:
@@ -38,40 +41,40 @@ spring:
 #        locator:
 #          enabled: true
 encrypt:
-  key: ${YODA_CONFIG_ENCRYPT_KEY}
+  key: ${BUMBLEBEE_CONFIG_ENCRYPT_KEY}
 
 ---
 
 spring:
   profiles: alpha
-
+  
 eureka:
   instance:
     instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
   client:
     service-url:
-      defaultZone: http://finder.alpha.ntuchealth/eureka
-
+      defaultZone: http://discovery.alpha.crm.ntuchealth/eureka
+      
 ---
 
 spring:
   profiles: uat
-
+  
 eureka:
   instance:
     instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
   client:
     service-url:
-      defaultZone: http://finder.uat.ntuchealth/eureka
-
+      defaultZone: http://discovery.uat.crm.ntuchealth/eureka
+      
 ---
 
 spring:
   profiles: prod
-
+  
 eureka:
   instance:
     instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
   client:
     service-url:
-      defaultZone: http://finder.ntuchealth/eureka
+      defaultZone: http://discovery.crm.ntuchealth/eureka

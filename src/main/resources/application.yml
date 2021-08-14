@@ -6,7 +6,7 @@ server:
 spring:
   profiles:
     active:
-      - ${YODA_SPRING_PROFILE:dev}
+      - ${BUMBLEBEE_SPRING_PROFILE:dev}
   application:
     name: gateway-service
 
@@ -15,6 +15,7 @@ cloud:
   aws:
     stack:
       auto: false
+
 ---
 
 spring:
@@ -24,13 +25,11 @@ jwt:
   expiration: 31536000000
 
 linkid:
-  client-id:
-  client-secret:
+  client-id: ${BUMBLEBEE_LINKEDID_CLIENT_ID}
+  client-secret: ${BUMBLEBEE_LINKEDID_CLIENT_SECRET}
 
 jwks:
-  url:
-   pre-prod: https://preprod-auth.fairprice.com.sg/
-   prod: https://auth.fairprice.com.sg/
+  url: https://preprod-auth.fairprice.com.sg/
 claims:
   identity:
     uid: https://claims.identity.nedigital.sg/uid
@@ -41,11 +40,4 @@ link-bridge:
   url:
     token: https://preprod-m2mauth.nedigital.sg/oauth/token
     api: https://preprod-identity.nedigital.sg
-
----
-
-spring:
-  profiles: alpha, uat, prod
-
-
 

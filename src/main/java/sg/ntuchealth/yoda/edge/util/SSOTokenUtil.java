@@ -19,7 +19,7 @@ import sg.ntuchealth.yoda.edge.service.model.Client;
 @Component
 public class SSOTokenUtil {
 
-  @Value("${jwks.url.pre-prod}")
+  @Value("${jwks.url}")
   private String jwksUrl;
 
   @Value("${claims.identity.uid}")

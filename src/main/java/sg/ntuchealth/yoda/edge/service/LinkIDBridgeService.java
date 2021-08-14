@@ -3,8 +3,6 @@ package sg.ntuchealth.yoda.edge.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sg.ntuchealth.yoda.edge.common.CommonUtils;
-import sg.ntuchealth.yoda.edge.config.CacheClient;
+import sg.ntuchealth.yoda.edge.repo.LinkIdRepository;
+import sg.ntuchealth.yoda.edge.repo.model.LinkIdToken;
+import sg.ntuchealth.yoda.edge.service.model.ClientProfile;
 import sg.ntuchealth.yoda.edge.service.model.LinkIdRequest;
-import sg.ntuchealth.yoda.edge.service.model.LinkIdResponse;
-import sg.ntuchealth.yoda.edge.service.model.UserProfile;
 
 @Service
 public class LinkIDBridgeService {
@@ -40,9 +38,13 @@ public class LinkIDBridgeService {
 
   @Autowired private RestTemplate restTemplateNoLB;
 
-  @Autowired private CacheClient cacheClient;
+  @Autowired private LinkIdRepository linkIdRepository;
 
-  private LinkIdResponse authenticateClient() {
+  public static final String LINK_ID_TOKEN = "token";
+
+  // This method will be called only if the entry has expired in the cache. LinkID Token is valid
+  // for 24 hours
+  private LinkIdToken authenticateClient() {
 
     HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
 
@@ -56,33 +58,40 @@ public class LinkIDBridgeService {
 
     HttpEntity<LinkIdRequest> entity = new HttpEntity<>(linkIdRequest, headers);
 
-    ResponseEntity<LinkIdResponse> linkIdResponse =
+    ResponseEntity<LinkIdToken> linkIdResponseEntity =
         restTemplateNoLB.exchange(
-            HTTPS_LINKBRIDGE_TOKEN, HttpMethod.POST, entity, LinkIdResponse.class);
-    LOGGER.info("linkid token obtained from LinkID Bridge API: {} ", linkIdResponse);
-    return linkIdResponse.getBody();
+            HTTPS_LINKBRIDGE_TOKEN, HttpMethod.POST, entity, LinkIdToken.class);
+    LOGGER.info("linkid token obtained from LinkID Bridge API: {} ", linkIdResponseEntity);
+
+    LinkIdToken linkIdToken = linkIdResponseEntity.getBody();
+    linkIdToken.setId(LINK_ID_TOKEN);
+
+    // setting TTL for cache entry from the value given by LinkID Token.
+    linkIdToken.setExpiration((long) linkIdToken.getExpiresIn());
+    return linkIdToken;
   }
 
-  public UserProfile findByUID(String uid) {
+  public ClientProfile findByUID(String uid) {
     String token = retrieveAccessToken();
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(token);
 
     HttpEntity<String> entity = new HttpEntity<>(uid, headers);
     String url = HTTPS_LINKBRIDGE_API + "/bridge/user/uid/" + uid;
-    ResponseEntity<UserProfile> res =
-        restTemplateNoLB.exchange(url, HttpMethod.GET, entity, UserProfile.class);
+    ResponseEntity<ClientProfile> res =
+        restTemplateNoLB.exchange(url, HttpMethod.GET, entity, ClientProfile.class);
 
     return res.getBody();
   }
 
-  public ResponseEntity<UserProfile> saveAssociation(String uid, String associationId)
+  public ResponseEntity<ClientProfile> saveAssociation(String uid, String associationId)
       throws JsonProcessingException {
 
     LOGGER.info("In saveAssociation API: {} ", uid);
 
-    HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
     String token = retrieveAccessToken();
+
+    HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
     headers.setBearerAuth(token);
 
     ObjectMapper mapper = new ObjectMapper();
@@ -94,27 +103,20 @@ public class LinkIDBridgeService {
     HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
     String url = HTTPS_LINKBRIDGE_API + "/bridge/user/uid/" + uid + "/association";
 
-    return restTemplateNoLB.exchange(url, HttpMethod.PATCH, entity, UserProfile.class);
+    return restTemplateNoLB.exchange(url, HttpMethod.PATCH, entity, ClientProfile.class);
   }
 
   /*
-  1. First time write to cache. cachedResponse is null
-  2. next time check cachedResponse. if its null or expired, write to cache
-  3. else retrieve from cache
+  1. Retrieve token from cache
+  2. If not found then call authenticateClient() method to get new token
+  3. Save the token in the cache
    */
   public String retrieveAccessToken() {
-    LocalDateTime currentDateTime = LocalDateTime.now();
-    LinkIdResponse cachedResponse = cacheClient.get("token");
-    LinkIdResponse linkIdResponse = cachedResponse;
-    if (cachedResponse == null || cachedResponse.getExpiryDateTime().isBefore(currentDateTime)) {
-      linkIdResponse = authenticateClient();
-      LocalDateTime expiryDateTime =
-          currentDateTime.plus(Duration.ofSeconds(linkIdResponse.getExpiresIn()));
-      linkIdResponse.setExpiryDateTime(expiryDateTime);
-      cacheClient.put("token", linkIdResponse);
-      LOGGER.info("Token obtained from LinkId Bridge API: {} ", linkIdResponse.getTokenType());
-    }
-
-    return linkIdResponse.getAccessToken();
+    LOGGER.info("In retrieveAccessToken method: ");
+    LinkIdToken linkIdToken =
+        linkIdRepository
+            .findById(LINK_ID_TOKEN)
+            .orElseGet(() -> linkIdRepository.save(authenticateClient()));
+    return linkIdToken.getAccessToken();
   }
 }

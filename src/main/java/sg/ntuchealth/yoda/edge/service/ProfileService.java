@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sg.ntuchealth.yoda.edge.common.CommonUtils;
 import sg.ntuchealth.yoda.edge.service.model.AssociationUpdateRequest;
-import sg.ntuchealth.yoda.edge.service.model.ProfileResponse;
-import sg.ntuchealth.yoda.edge.service.model.UserProfile;
+import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
+import sg.ntuchealth.yoda.edge.service.model.ClientProfile;
 
 @Service
 public class ProfileService {
@@ -24,33 +24,31 @@ public class ProfileService {
 
   @Autowired private RestTemplate restTemplate;
 
-  public ResponseEntity<String> validateUser(String associationId) {
+  public ResponseEntity<ClientLoginResponse> validateUser(String associationId) {
     UUID id = UUID.fromString(associationId);
     LOGGER.info("ProfileService validateUser id: {}", id);
-    return restTemplate.getForEntity(HTTP_CLIENT_SERVICE_APPLICABLE + "/login/" + id, String.class);
+    return restTemplate.getForEntity(
+        HTTP_CLIENT_SERVICE_APPLICABLE + "/login/" + id, ClientLoginResponse.class);
   }
 
-  public ResponseEntity<ProfileResponse> createUserProfile(UserProfile profileRequest) {
+  public ResponseEntity<ClientLoginResponse> createUserProfile(ClientProfile profileRequest) {
     LOGGER.info("ProfileService createUserProfile: {}", profileRequest);
     return restTemplate.postForEntity(
-        HTTP_CLIENT_SERVICE_APPLICABLE, profileRequest, ProfileResponse.class);
+        HTTP_CLIENT_SERVICE_APPLICABLE, profileRequest, ClientLoginResponse.class);
   }
 
-  public ResponseEntity<ProfileResponse> getAssociation(String uid) {
+  public ResponseEntity<String> getAssociation(String uid) {
     LOGGER.info("ProfileService getAssociation id: {}", uid);
     return restTemplate.getForEntity(
-        HTTP_CLIENT_SERVICE_APPLICABLE + "/association/" + uid, ProfileResponse.class);
+        HTTP_CLIENT_SERVICE_APPLICABLE + "/association/" + uid, String.class);
   }
 
   public void updateAssociation(String uid) {
     LOGGER.info("ProfileService updateAssociation id: {}", uid);
 
     HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
-
     AssociationUpdateRequest req = AssociationUpdateRequest.builder().associated(true).build();
-
     HttpEntity<AssociationUpdateRequest> request = new HttpEntity<>(req, headers);
-
     String url = HTTP_CLIENT_SERVICE_APPLICABLE + "/association/" + uid;
 
     restTemplate.exchange(url, HttpMethod.PUT, request, AssociationUpdateRequest.class);

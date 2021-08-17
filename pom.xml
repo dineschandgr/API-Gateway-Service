@@ -9,18 +9,18 @@
         <version>2.2.7.RELEASE</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
-    <groupId>sg.ntuchealth.bumblebee</groupId>
+    <groupId>sg.ntuchealth.yoda</groupId>
     <artifactId>gateway-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>gateway-service</name>
     <description>gateway service</description>
-
+ 
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR4</spring-cloud.version>
     </properties>
     <scm>
-        <connection>scm:git:ssh://git@bitbucket.org/ntuclink/gateway-service.git</connection>
+        <connection>scm:git:ssh://git@bitbucket.org:ntuclink/gateway-service.git</connection>
         <url>https://bitbucket.org/ntuclink/gateway-service.git</url>
         <developerConnection>scm:git:ssh://git@bitbucket.org/ntuclink/gateway-service.git</developerConnection>
     </scm>
@@ -104,6 +104,15 @@
 			<artifactId>logback-slack-appender</artifactId>
 			<version>1.4.0</version>
 		</dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-spring-boot-starter</artifactId>
+            <version>5.0.1</version>
+        </dependency><dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-logback</artifactId>
+            <version>5.0.1</version>
+        </dependency>
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>

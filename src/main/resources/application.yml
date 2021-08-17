@@ -41,3 +41,7 @@ link-bridge:
     token: https://preprod-m2mauth.nedigital.sg/oauth/token
     api: https://preprod-identity.nedigital.sg
 
+redis:
+  host: localhost
+  port: 6379
+

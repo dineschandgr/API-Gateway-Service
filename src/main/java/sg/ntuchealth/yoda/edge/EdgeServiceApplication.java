@@ -63,10 +63,28 @@ public class EdgeServiceApplication {
                     .uri("lb://membership-service"))
         .route(
             r ->
+                r.path("/products/category/{category}/{subcategory}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/{id}/centers/list")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
                 r.path("/groups/v2/{id}")
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://organization-service"))
+        .route(
+            r ->
+                r.path("/products-ext/{id}/offerings/list")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
         .build();
   }
 

@@ -25,6 +25,4 @@ public class ClientLoginResponse {
   private String clientName;
 
   private String clientEmail;
-
-  private int statusCode;
 }

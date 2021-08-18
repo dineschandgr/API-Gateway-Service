@@ -24,28 +24,33 @@ public class ClientService {
 
   @Autowired private LinkIDBridgeService linkIDBridgeService;
 
+  @Autowired private B3TokenService b3TokenService;
+
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-  public ClientLoginResponse validateClient(Client client) throws JsonProcessingException {
+  public int validateClientAndGenerateB3Token(Client client) throws JsonProcessingException {
     ResponseEntity<ClientLoginResponse> profileResponseEntity = null;
+    int statusCode;
+
     if (!StringUtils.isEmpty(client.getAssociationID())) {
       profileResponseEntity = profileService.validateUser(client.getAssociationID());
-      profileResponseEntity.getBody().setStatusCode(StatusCodes.EXISTING_USER.getCode());
       LOGGER.info("Existing client Login flow");
+
       if (!profileResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
         LOGGER.error("Client does not exist : {} ", client.getId());
         throw new ClientNotFoundException("Client does not exist");
       }
+
+      statusCode = StatusCodes.EXISTING_USER.getCode();
+
     } else {
       LOGGER.info("Client Association does not exist in the DB. calling LinkID Bridge APIs");
       profileResponseEntity = createUserAndSaveAssociation(client);
-      profileResponseEntity.getBody().setStatusCode(StatusCodes.NEW_USER.getCode());
+      statusCode = StatusCodes.NEW_USER.getCode();
     }
 
-    if (profileResponseEntity == null)
-      throw new ClientNotFoundException("The client does not exist " + client.getAssociationID());
-
-    return profileResponseEntity.getBody();
+    b3TokenService.generateAndSaveAccessToken(profileResponseEntity.getBody());
+    return statusCode;
   }
 
   public ResponseEntity<ClientLoginResponse> createUserAndSaveAssociation(Client client)

@@ -2,6 +2,7 @@ package sg.ntuchealth.yoda.edge.repo.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class B3Token {
   private String id;
 
   private String accessToken;
+
+  private UUID clientId;
 
   @TimeToLive private Long expiration;
 }

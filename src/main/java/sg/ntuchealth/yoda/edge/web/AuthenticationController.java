@@ -45,7 +45,7 @@ public class AuthenticationController {
         LoginResponse.builder()
             .success(true)
             .message("Token Validation Successful")
-            .statusCode(HttpStatus.OK.value())
+            .statusCode(clientLoginResponse.getStatusCode())
             .build(),
         HttpStatus.ACCEPTED);
   }

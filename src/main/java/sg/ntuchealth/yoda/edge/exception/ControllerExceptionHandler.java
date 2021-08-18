@@ -72,6 +72,14 @@ public class ControllerExceptionHandler {
         HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(B3TokenNotFoundException.class)
+  public ResponseEntity<LoginResponse> b3TokenNotFoundException(Exception ex) {
+    logException(ex);
+    return new ResponseEntity<>(
+        LoginResponse.builder().success(false).message(ex.getMessage()).build(),
+        HttpStatus.FORBIDDEN);
+  }
+
   @ExceptionHandler(AssociationNotSavedinLinkIDException.class)
   public ResponseEntity<LoginResponse> associationNotSavedinLindIDException(Exception ex) {
     logException(ex);

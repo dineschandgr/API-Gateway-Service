@@ -37,13 +37,11 @@ public class B3TokenService {
         .orElseGet(() -> b3TokenRepository.save(generateToken(clientLoginResponse)));
   }
 
-  public String retrieveAccessToken(String clientId) {
+  public B3Token retrieveAccessToken(String associationId) {
     LOGGER.info("In retrieveAccessToken method: ");
-    B3Token b3Token =
-        b3TokenRepository
-            .findById(B3_TOKEN + clientId)
-            .orElseThrow(() -> new B3TokenNotFoundException("B3 Access Token not found in cache"));
-    return b3Token.getAccessToken();
+    return b3TokenRepository
+        .findById(B3_TOKEN + associationId)
+        .orElseThrow(() -> new B3TokenNotFoundException("B3 Access Token not found in cache"));
   }
 
   public B3Token generateToken(ClientLoginResponse clientLoginResponse) {
@@ -54,6 +52,7 @@ public class B3TokenService {
         .id(B3_TOKEN + clientLoginResponse.getId())
         .accessToken(accessToken)
         .expiration(expirationSeconds)
+        .clientId(clientLoginResponse.getClientId())
         .build();
   }
 }

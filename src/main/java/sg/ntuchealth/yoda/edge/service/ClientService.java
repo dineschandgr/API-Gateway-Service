@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.exception.AssociationNotSavedinLinkIDException;
 import sg.ntuchealth.yoda.edge.exception.ClientNotFoundException;
 import sg.ntuchealth.yoda.edge.service.model.Client;
@@ -29,6 +30,7 @@ public class ClientService {
     ResponseEntity<ClientLoginResponse> profileResponseEntity = null;
     if (!StringUtils.isEmpty(client.getAssociationID())) {
       profileResponseEntity = profileService.validateUser(client.getAssociationID());
+      profileResponseEntity.getBody().setStatusCode(StatusCodes.EXISTING_USER.getCode());
       LOGGER.info("Existing client Login flow");
       if (!profileResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
         LOGGER.error("Client does not exist : {} ", client.getId());
@@ -37,6 +39,7 @@ public class ClientService {
     } else {
       LOGGER.info("Client Association does not exist in the DB. calling LinkID Bridge APIs");
       profileResponseEntity = createUserAndSaveAssociation(client);
+      profileResponseEntity.getBody().setStatusCode(StatusCodes.NEW_USER.getCode());
     }
 
     if (profileResponseEntity == null)

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class UserProfile {
+public class ClientProfile {
 
   @NotNull(message = "Uid cannot be null")
   private String uid;

@@ -20,6 +20,9 @@ cloud:
 
 spring:
   profiles: dev
+jwt:
+  secret: n2r5u8x/A%D*G-KaPdSgVkYp3s6v9y$B&E(H+MbQeThWmZq4t7w!z%C*F-J@NcRf
+  expiration: 31536000000
 
 linkid:
   client-id: ${BUMBLEBEE_LINKEDID_CLIENT_ID}
@@ -37,4 +40,8 @@ link-bridge:
   url:
     token: https://preprod-m2mauth.nedigital.sg/oauth/token
     api: https://preprod-identity.nedigital.sg
+
+redis:
+  host: localhost
+  port: 6379
 

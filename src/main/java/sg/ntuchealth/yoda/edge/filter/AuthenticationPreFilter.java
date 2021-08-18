@@ -15,17 +15,21 @@ import reactor.core.publisher.Mono;
 import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AssocationNotFoundGlobalException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
-import sg.ntuchealth.yoda.edge.service.UserService;
-import sg.ntuchealth.yoda.edge.service.model.User;
+import sg.ntuchealth.yoda.edge.service.B3TokenService;
+import sg.ntuchealth.yoda.edge.service.ClientService;
+import sg.ntuchealth.yoda.edge.service.model.Client;
 
 @Component
 public class AuthenticationPreFilter implements GlobalFilter {
 
+  public static final String AUTHORIZATION = "Authorization";
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
   @Autowired private TokenUtil jwtUtil;
 
-  @Autowired private UserService userService;
+  @Autowired private ClientService clientService;
+
+  @Autowired private B3TokenService b3TokenService;
 
   @SneakyThrows
   @Override
@@ -36,30 +40,37 @@ public class AuthenticationPreFilter implements GlobalFilter {
     ServerHttpRequest request = exchange.getRequest();
     final String token = this.validateAndRetrieveAuthHeader(request);
 
-    User user = jwtUtil.validateTokenAndRetrieveUser(token);
+    Client client = jwtUtil.validateTokenAndRetrieveUser(token);
 
     LOGGER.info("Token Validation successful and request is being routed");
 
-    validateUserAssociation(user);
+    validateUserAssociation(client);
+
+    String b3AccessToken = b3TokenService.retrieveAccessToken(client.getAssociationID());
 
     return chain.filter(
         exchange
             .mutate()
-            .request(request.mutate().header("AssociationId", user.getAssociationID()).build())
+            .request(
+                request
+                    .mutate()
+                    .header("AssociationId", client.getAssociationID())
+                    .header(AUTHORIZATION, "Bearer " + b3AccessToken)
+                    .build())
             .build());
   }
 
   private String validateAndRetrieveAuthHeader(ServerHttpRequest request) {
-    if (!request.getHeaders().containsKey("Authorization"))
+    if (!request.getHeaders().containsKey(AUTHORIZATION))
       throw new AuthorizationGlobalException(
           HttpStatus.UNAUTHORIZED, StatusCodes.AUTHORIZATION_ERROR.getMessage());
 
-    return request.getHeaders().getOrEmpty("Authorization").get(0);
+    return request.getHeaders().getOrEmpty(AUTHORIZATION).get(0);
   }
 
-  private void validateUserAssociation(User user) {
-    if (StringUtils.isEmpty(user.getAssociationID())) {
-      if (userService.isUserAssociated(user)) {
+  private void validateUserAssociation(Client client) {
+    if (StringUtils.isEmpty(client.getAssociationID())) {
+      if (clientService.isUserAssociated(client)) {
         throw new AssocationNotFoundGlobalException(
             HttpStatus.UNAUTHORIZED, StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN.getMessage());
       } else {

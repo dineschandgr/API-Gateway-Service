@@ -12,13 +12,17 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponse {
+public class ClientLoginResponse {
 
-  private String id;
-
-  private String ssoUid;
+  private UUID id;
 
   private UUID clientId;
 
+  private String ssoUid;
+
   private boolean associated;
+
+  private String clientName;
+
+  private String clientEmail;
 }

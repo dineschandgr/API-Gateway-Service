@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import sg.ntuchealth.yoda.edge.exception.TokenExpiredException;
-import sg.ntuchealth.yoda.edge.service.model.User;
+import sg.ntuchealth.yoda.edge.service.model.Client;
 
 @Component
 public class SSOTokenUtil {
@@ -59,8 +59,8 @@ public class SSOTokenUtil {
     return true;
   }
 
-  public User retrieveUserFromToken() {
-    return User.builder()
+  public Client retrieveUserFromToken() {
+    return Client.builder()
         .id(jwt.getClaim(uid).asString())
         .associationID(jwt.getClaim(associationID).asString())
         .build();

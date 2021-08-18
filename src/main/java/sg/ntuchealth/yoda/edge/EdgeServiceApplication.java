@@ -2,6 +2,7 @@ package sg.ntuchealth.yoda.edge;
 
 import java.util.Arrays;
 import java.util.Collections;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -11,6 +12,10 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -23,13 +28,64 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableDiscoveryClient
 public class EdgeServiceApplication {
 
+  @Value("${redis.host}")
+  private String REDIS_HOST;
+
+  @Value("${redis.port}")
+  private Integer REDIS_PORT;
+
   public static void main(String[] args) {
     SpringApplication.run(EdgeServiceApplication.class, args);
   }
 
   @Bean
   public RouteLocator routeLocator(RouteLocatorBuilder builder) {
-    return builder.routes().route(r -> r.path("/profile/**").uri("lb://profile-service")).build();
+    return builder
+        .routes()
+        .route(r -> r.path("/profile/**").uri("lb://profile-service"))
+        .route(
+            r ->
+                r.path("/marketing/channel")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/category")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/category/{category}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/category/{category}/{subcategory}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/{id}/centers/list")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/groups/v2/{id}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://organization-service"))
+        .route(
+            r ->
+                r.path("/products-ext/{id}/offerings/list")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
+        .build();
   }
 
   @Bean
@@ -71,5 +127,18 @@ public class EdgeServiceApplication {
     source.registerCorsConfiguration("/**", corsConfig);
 
     return new CorsWebFilter(source);
+  }
+
+  @Bean
+  public JedisConnectionFactory jedisConnectionFactory() {
+    RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(REDIS_HOST, REDIS_PORT);
+    return new JedisConnectionFactory(config);
+  }
+
+  @Bean
+  public RedisTemplate<String, Object> redisTemplate() {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(jedisConnectionFactory());
+    return template;
   }
 }

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.TokenExpiredGlobalException;
-import sg.ntuchealth.yoda.edge.service.model.User;
+import sg.ntuchealth.yoda.edge.service.model.Client;
 
 @Component
 public class TokenUtil {
@@ -43,14 +43,14 @@ public class TokenUtil {
     provider = new UrlJwkProvider(jwksUrl);
   }
 
-  public User validateTokenAndRetrieveUser(String token) throws JwkException {
+  public Client validateTokenAndRetrieveUser(String token) throws JwkException {
 
     String ssoToken = token.substring(7);
 
     jwt = JWT.decode(ssoToken);
 
     // Check expiration
-    if (Boolean.TRUE.equals(isTokenExpired()))
+    if (isTokenExpired())
       throw new TokenExpiredGlobalException(
           HttpStatus.UNAUTHORIZED, StatusCodes.TOKEN_EXPIRED.getMessage());
 
@@ -66,9 +66,9 @@ public class TokenUtil {
     return retrieveUserFromToken();
   }
 
-  public User retrieveUserFromToken() {
+  public Client retrieveUserFromToken() {
 
-    return User.builder()
+    return Client.builder()
         .id(jwt.getClaim(uid).asString())
         .associationID(jwt.getClaim(associationID).asString())
         .build();
@@ -84,7 +84,7 @@ public class TokenUtil {
     return count > 0;
   }
 
-  public Boolean isTokenExpired() {
+  public boolean isTokenExpired() {
     return jwt.getExpiresAt().before(Calendar.getInstance().getTime());
   }
 }

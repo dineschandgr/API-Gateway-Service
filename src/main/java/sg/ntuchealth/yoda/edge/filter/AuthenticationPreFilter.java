@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AssocationNotFoundGlobalException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
+import sg.ntuchealth.yoda.edge.repo.model.B3Token;
 import sg.ntuchealth.yoda.edge.service.B3TokenService;
 import sg.ntuchealth.yoda.edge.service.ClientService;
 import sg.ntuchealth.yoda.edge.service.model.Client;
@@ -46,7 +47,7 @@ public class AuthenticationPreFilter implements GlobalFilter {
 
     validateUserAssociation(client);
 
-    String b3AccessToken = b3TokenService.retrieveAccessToken(client.getAssociationID());
+    B3Token b3Token = b3TokenService.retrieveAccessToken(client.getAssociationID());
 
     return chain.filter(
         exchange
@@ -55,7 +56,8 @@ public class AuthenticationPreFilter implements GlobalFilter {
                 request
                     .mutate()
                     .header("AssociationId", client.getAssociationID())
-                    .header(AUTHORIZATION, "Bearer " + b3AccessToken)
+                    .header("ClientId", String.valueOf(b3Token.getClientId()))
+                    .header(AUTHORIZATION, "Bearer " + b3Token.getAccessToken())
                     .build())
             .build());
   }
@@ -70,14 +72,8 @@ public class AuthenticationPreFilter implements GlobalFilter {
 
   private void validateUserAssociation(Client client) {
     if (StringUtils.isEmpty(client.getAssociationID())) {
-      if (clientService.isUserAssociated(client)) {
-        throw new AssocationNotFoundGlobalException(
-            HttpStatus.UNAUTHORIZED, StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN.getMessage());
-      } else {
-        throw new AssocationNotFoundGlobalException(
-            HttpStatus.UNAUTHORIZED,
-            StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN_AND_DB.getMessage());
-      }
+      throw new AssocationNotFoundGlobalException(
+          HttpStatus.UNAUTHORIZED, StatusCodes.ASSOCIATION_NOT_FOUND_IN_TOKEN.getMessage());
     }
   }
 }

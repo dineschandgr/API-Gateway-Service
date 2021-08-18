@@ -10,22 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sg.ntuchealth.yoda.edge.service.AuthenticationManager;
-import sg.ntuchealth.yoda.edge.service.B3TokenService;
-import sg.ntuchealth.yoda.edge.service.ClientService;
-import sg.ntuchealth.yoda.edge.service.model.Client;
-import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
+import sg.ntuchealth.yoda.edge.service.AuthenticationService;
 import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
 
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
 
-  @Autowired private AuthenticationManager authenticationManager;
-
-  @Autowired private ClientService clientService;
-
-  @Autowired private B3TokenService b3TokenService;
+  @Autowired private AuthenticationService authenticationService;
 
   /*
   Validiate the JWT received from SSO
@@ -33,19 +25,14 @@ public class AuthenticationController {
   @PostMapping("validate")
   public ResponseEntity<LoginResponse> login(@RequestHeader(value = "Authorization") String token)
       throws JwkException, JsonProcessingException {
-    String ssoToken = token.substring(7);
 
-    Client client = authenticationManager.authenticate(ssoToken);
-
-    ClientLoginResponse clientLoginResponse = clientService.validateClient(client);
-
-    b3TokenService.generateAndSaveAccessToken(clientLoginResponse);
+    int clientStatusCode = authenticationService.authenticateClient(token);
 
     return new ResponseEntity<>(
         LoginResponse.builder()
             .success(true)
             .message("Token Validation Successful")
-            .statusCode(HttpStatus.OK.value())
+            .statusCode(clientStatusCode)
             .build(),
         HttpStatus.ACCEPTED);
   }

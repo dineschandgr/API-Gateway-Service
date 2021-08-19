@@ -43,7 +43,7 @@ public class EdgeServiceApplication {
     return builder
         .routes()
         .route(r -> r.path("/profile/**").uri("lb://profile-service"))
-        .route(r -> r.path("/lovedone/**").uri("lb://profile-service"))
+        .route(r -> r.path("/cart/**").uri("lb://cart-service"))
         .route(
             r ->
                 r.path("/marketing/channel")
@@ -71,12 +71,6 @@ public class EdgeServiceApplication {
         .route(
             r ->
                 r.path("/products/{id}/centers/list")
-                    .and()
-                    .method(HttpMethod.GET)
-                    .uri("lb://membership-service"))
-        .route(
-            r ->
-                r.path("/products/v2/{id}/events")
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://membership-service"))

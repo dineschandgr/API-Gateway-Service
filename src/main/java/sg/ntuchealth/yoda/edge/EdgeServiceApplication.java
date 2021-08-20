@@ -99,6 +99,13 @@ public class EdgeServiceApplication {
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://subscription-service"))
+        .route(
+            r ->
+                r.path("/products/v2/{id}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(r -> r.path("/intake").and().method(HttpMethod.GET).uri("lb://booking-service"))
         .build();
   }
 

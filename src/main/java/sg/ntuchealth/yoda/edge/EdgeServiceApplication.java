@@ -47,6 +47,12 @@ public class EdgeServiceApplication {
         .route(r -> r.path("/cart/**").uri("lb://cart-service"))
         .route(
             r ->
+                r.path("/config/mastercode/**")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://configuration-service"))
+        .route(
+            r ->
                 r.path("/marketing/channel")
                     .and()
                     .method(HttpMethod.GET)

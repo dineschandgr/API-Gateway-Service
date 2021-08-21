@@ -53,12 +53,6 @@ public class EdgeServiceApplication {
                     .uri("lb://configuration-service"))
         .route(
             r ->
-                r.path("/marketing/channel")
-                    .and()
-                    .method(HttpMethod.GET)
-                    .uri("lb://membership-service"))
-        .route(
-            r ->
                 r.path("/products/category")
                     .and()
                     .method(HttpMethod.GET)

@@ -106,6 +106,10 @@ public class EdgeServiceApplication {
                  .and()
                  .method(HttpMethod.GET)
                  .uri("lb://booking-service"))
+        .route(r -> r.path("/yoda-sessions")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://booking-service"))
         .build();
   }
 

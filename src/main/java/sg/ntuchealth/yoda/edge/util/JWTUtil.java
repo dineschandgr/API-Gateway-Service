@@ -20,7 +20,7 @@ public class JWTUtil {
 
   public String generateToken(ClientLoginResponse clientLoginResponse) {
     Map<String, Object> claims = new HashMap<>();
-    claims.put("id", clientLoginResponse.getId());
+    claims.put("id", clientLoginResponse.getClientId());
     claims.put("name", clientLoginResponse.getClientName());
     return doGenerateToken(claims, clientLoginResponse.getClientEmail());
   }

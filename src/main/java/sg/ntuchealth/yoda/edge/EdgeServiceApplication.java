@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -102,14 +103,14 @@ public class EdgeServiceApplication {
                     .uri("lb://membership-service"))
         .route(r -> r.path("/intake").and().method(HttpMethod.GET).uri("lb://booking-service"))
         .route(r -> r.path("/client-sessions").uri("lb://booking-service"))
-        .route(r -> r.path("/client-sessions/client/{cId}/subscription/{sId}")
-                 .and()
-                 .method(HttpMethod.GET)
-                 .uri("lb://booking-service"))
-        .route(r -> r.path("/yoda-sessions")
+        .route(
+            r ->
+                r.path("/client-sessions/client/{cId}/subscription/{sId}")
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://booking-service"))
+        .route(
+            r -> r.path("/yoda-sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
         .build();
   }
 
@@ -164,6 +165,7 @@ public class EdgeServiceApplication {
   public RedisTemplate<String, Object> redisTemplate() {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(jedisConnectionFactory());
+    template.setKeySerializer(new StringRedisSerializer());
     return template;
   }
 }

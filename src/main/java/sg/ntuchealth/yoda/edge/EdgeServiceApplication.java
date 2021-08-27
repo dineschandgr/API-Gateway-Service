@@ -112,11 +112,27 @@ public class EdgeServiceApplication {
         .route(
             r -> r.path("/yoda-sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
         .route(
-                r ->
-                    r.path("/subscriptions/{id}/next")
-                        .and()
-                        .method(HttpMethod.GET)
-                        .uri("lb://subscription-service"))
+            r ->
+                r.path("/subscriptions/{id}/next")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
+        .route(
+            r -> r.path("/services").and().method(HttpMethod.GET).uri("lb://subscription-service"))
+        .route(
+            r ->
+                r.path("/groups/locations")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://organization-service"))
+        .route(
+            r ->
+                r.path("/products/list")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://membership-service"))
+        .route(
+            r -> r.path("/appointment").and().method(HttpMethod.GET).uri("lb://membership-service"))
         .build();
   }
 

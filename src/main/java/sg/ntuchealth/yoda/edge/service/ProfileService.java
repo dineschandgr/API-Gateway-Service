@@ -14,6 +14,7 @@ import sg.ntuchealth.yoda.edge.common.CommonUtils;
 import sg.ntuchealth.yoda.edge.service.model.AssociationUpdateRequest;
 import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
 import sg.ntuchealth.yoda.edge.service.model.ClientProfile;
+import sg.ntuchealth.yoda.edge.service.model.ProfileCreateRequest;
 
 @Service
 public class ProfileService {
@@ -31,7 +32,15 @@ public class ProfileService {
         HTTP_CLIENT_SERVICE_APPLICABLE + "/login/" + id, ClientLoginResponse.class);
   }
 
-  public ResponseEntity<ClientLoginResponse> createUserProfile(ClientProfile profileRequest) {
+  public ResponseEntity<ClientLoginResponse> createUserProfile(ClientProfile clientProfile) {
+    ProfileCreateRequest profileRequest =
+        ProfileCreateRequest.builder()
+            .name(clientProfile.getName())
+            .email(clientProfile.getEmail())
+            .phoneNumber(clientProfile.getPhoneNumber())
+            .countryCode(clientProfile.getCountryCode())
+            .uid(clientProfile.getUid())
+            .build();
     LOGGER.info("ProfileService createUserProfile: {}", profileRequest);
     return restTemplate.postForEntity(
         HTTP_CLIENT_SERVICE_APPLICABLE, profileRequest, ClientLoginResponse.class);

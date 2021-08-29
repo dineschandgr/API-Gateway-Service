@@ -132,7 +132,7 @@ public class EdgeServiceApplication {
                 r.path("/payment/dbs-pay")
                     .and()
                     .method(HttpMethod.POST)
-                    .uri("lb://payment-mock-service"))
+                    .uri("lb://dbs-icn-mock-service"))
         .build();
   }
 

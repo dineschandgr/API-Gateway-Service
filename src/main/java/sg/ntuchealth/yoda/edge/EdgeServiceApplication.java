@@ -127,6 +127,12 @@ public class EdgeServiceApplication {
                     .uri("lb://membership-service"))
         .route(
             r -> r.path("/appointment").and().method(HttpMethod.GET).uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/payment/dbs-pay")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://payment-mock-service"))
         .build();
   }
 

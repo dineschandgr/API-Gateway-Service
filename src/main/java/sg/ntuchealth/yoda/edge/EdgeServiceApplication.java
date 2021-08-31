@@ -101,8 +101,15 @@ public class EdgeServiceApplication {
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://membership-service"))
-        .route(r -> r.path("/intake").and().method(HttpMethod.GET).uri("lb://booking-service"))
+        .route(r -> r.path("/intake").uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/intake/{id}/sessions")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://booking-service"))
         .route(r -> r.path("/intake/enroll").uri("lb://booking-service"))
+        .route(r -> r.path("/intake/enroll/{intake}").uri("lb://booking-service"))
         .route(
             r -> r.path("/yoda-sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
         .route(

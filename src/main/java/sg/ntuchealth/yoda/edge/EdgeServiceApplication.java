@@ -140,6 +140,12 @@ public class EdgeServiceApplication {
             r -> r.path("/services").and().method(HttpMethod.GET).uri("lb://subscription-service"))
         .route(
             r ->
+                r.path("/services/sessions")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
+        .route(
+            r ->
                 r.path("/groups/locations")
                     .and()
                     .method(HttpMethod.POST)

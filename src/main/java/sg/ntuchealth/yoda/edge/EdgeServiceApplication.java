@@ -164,6 +164,8 @@ public class EdgeServiceApplication {
                     .and()
                     .method(HttpMethod.POST)
                     .uri("lb://dbs-icn-mock-service"))
+        .route(
+            r -> r.path("/attachments").and().method(HttpMethod.GET).uri("lb://attachment-service"))
         .build();
   }
 

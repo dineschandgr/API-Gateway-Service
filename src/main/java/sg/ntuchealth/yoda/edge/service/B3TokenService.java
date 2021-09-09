@@ -55,4 +55,10 @@ public class B3TokenService {
         .clientId(clientLoginResponse.getClientId())
         .build();
   }
+
+  // Re-generate token after Profile is Linked
+  public void regenerateToken(ClientLoginResponse clientLoginResponse) {
+    LOGGER.info("In regenerateToken method: {} ", clientLoginResponse.getClientId());
+    b3TokenRepository.save(generateToken(clientLoginResponse));
+  }
 }

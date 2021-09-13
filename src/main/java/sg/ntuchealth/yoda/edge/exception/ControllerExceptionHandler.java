@@ -19,6 +19,8 @@ public class ControllerExceptionHandler {
 
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+  private static final String GENERIC_ERROR = "Oops! There was an error.";
+
   @ExceptionHandler({
     JwkException.class,
     JWTVerificationException.class,
@@ -92,11 +94,27 @@ public class ControllerExceptionHandler {
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  @ExceptionHandler(ClientProfileCreationException.class)
+  public ResponseEntity<LoginResponse> clientProfileCreationException(Exception ex) {
+    logException(ex);
+    return new ResponseEntity<>(
+        LoginResponse.builder()
+            .success(false)
+            .message("Error in Client Profile Creation")
+            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .build(),
+        HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<LoginResponse> genericException(Exception ex) {
     logException(ex);
     return new ResponseEntity<>(
-        LoginResponse.builder().success(false).message(ex.getMessage()).build(),
+        LoginResponse.builder()
+            .success(false)
+            .message(GENERIC_ERROR)
+            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .build(),
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
 

@@ -1,6 +1,5 @@
 package sg.ntuchealth.yoda.edge.service;
 
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,8 @@ import sg.ntuchealth.yoda.edge.service.model.AssociationUpdateRequest;
 import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
 import sg.ntuchealth.yoda.edge.service.model.ClientProfile;
 import sg.ntuchealth.yoda.edge.service.model.ProfileCreateRequest;
+
+import java.util.UUID;
 
 @Service
 public class ProfileService {
@@ -37,8 +38,8 @@ public class ProfileService {
         ProfileCreateRequest.builder()
             .name(clientProfile.getName())
             .email(clientProfile.getEmail())
-            .phoneNumber(clientProfile.getPhoneNumber())
-            .countryCode(clientProfile.getCountryCode())
+            .phoneNumber(clientProfile.getPhone_number())
+            .countryCode(clientProfile.getCountry_code())
             .uid(clientProfile.getUid())
             .build();
     LOGGER.info("ProfileService createUserProfile: {}", profileRequest);

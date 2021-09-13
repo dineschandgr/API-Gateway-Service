@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import sg.ntuchealth.yoda.edge.common.StatusCodes;
 import sg.ntuchealth.yoda.edge.exception.AssociationNotSavedinLinkIDException;
 import sg.ntuchealth.yoda.edge.exception.ClientNotFoundException;
+import sg.ntuchealth.yoda.edge.exception.ClientProfileCreationException;
 import sg.ntuchealth.yoda.edge.service.model.Client;
 import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
 import sg.ntuchealth.yoda.edge.service.model.ClientProfile;
@@ -56,39 +57,32 @@ public class ClientService {
   public ResponseEntity<ClientLoginResponse> createUserAndSaveAssociation(Client client)
       throws JsonProcessingException {
 
-    ClientProfile clientProfile = linkIDBridgeService.findByUID(client.getId());
-    LOGGER.info("Response from linkIDBridgeService.findByUID is: {} ", clientProfile);
-    ResponseEntity<ClientLoginResponse> profileResponseEntity =
-        profileService.createUserProfile(clientProfile);
-    ResponseEntity<ClientProfile> clientResponseEntity = null;
+    try {
+      ClientProfile clientProfile = linkIDBridgeService.findByUID(client.getId());
+      LOGGER.info("Response from linkIDBridgeService.findByUID is: {} ", clientProfile);
+      ResponseEntity<ClientLoginResponse> profileResponseEntity =
+          profileService.createUserProfile(clientProfile);
+      ResponseEntity<ClientProfile> clientResponseEntity = null;
 
-    if (profileResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
+      if (profileResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
+        clientResponseEntity =
+            linkIDBridgeService.saveAssociation(
+                client.getId(), String.valueOf(profileResponseEntity.getBody().getId()));
 
-      clientResponseEntity =
-          linkIDBridgeService.saveAssociation(
-              client.getId(), String.valueOf(profileResponseEntity.getBody().getId()));
+        if (!clientResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
+          throw new AssociationNotSavedinLinkIDException(
+              "Client Association cannot be saved in LinkID");
+        }
 
-      if (!clientResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-        throw new AssociationNotSavedinLinkIDException(
-            "Client Association cannot be saved in LinkID");
+        // Save Association Entry in Client_Login table
+        profileService.updateAssociation(client.getId());
       }
+      LOGGER.info(
+          "Response from linkIDBridgeService.saveAssociation is : {} ", clientResponseEntity);
 
-      // Save Association Entry in Client_Login table
-      profileService.updateAssociation(client.getId());
+      return profileResponseEntity;
+    } catch (Exception e) {
+      throw new ClientProfileCreationException(e);
     }
-    LOGGER.info("Response from linkIDBridgeService.saveAssociation is : {} ", clientResponseEntity);
-
-    return profileResponseEntity;
-  }
-
-  public boolean isUserAssociated(Client client) {
-    ResponseEntity<String> responseEntity = profileService.getAssociation(client.getId());
-    LOGGER.info("Client Service validateClientAssociation ");
-    if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-      LOGGER.error("Client does not exist : {} ", client.getId());
-      throw new ClientNotFoundException("Client does not exist");
-    }
-
-    return true;
   }
 }

@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class ClientProfile {
 
   @NotNull(message = "Uid cannot be null")
@@ -23,28 +22,28 @@ public class ClientProfile {
   @NotBlank(message = "Name cannot be empty")
   private String name;
 
-  private String phoneNumber;
+  private String phone_number;
 
-  private String countryCode;
+  private String country_code;
 
   @NotNull(message = "Email cannot be null")
   private String email;
 
-  private String phoneNumberLastVerified;
+  private String phone_number_last_verified;
 
-  private String emailLastVerified;
+  private String email_last_verified;
 
-  private String dateOfBirth;
+  private String date_of_birth;
 
   private String preferences;
 
   private String memberships;
 
-  private String myinfoLastVerified;
+  private String myinfo_last_verified;
 
-  private String createdAt;
+  private String created_at;
 
-  private String updatedAt;
+  private String updated_at;
 
   Map<String, Object> association;
 

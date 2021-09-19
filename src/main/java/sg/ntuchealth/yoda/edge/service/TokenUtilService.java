@@ -3,9 +3,6 @@ package sg.ntuchealth.yoda.edge.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import sg.ntuchealth.yoda.edge.repo.B3TokenRepository;
 import sg.ntuchealth.yoda.edge.util.JWTUtil;
+
+import java.util.Date;
+import java.util.Map;
 
 @Service
 public class TokenUtilService {
@@ -71,26 +71,5 @@ public class TokenUtilService {
 
   public Boolean validateToken(String token) {
     return !isTokenExpired(token);
-  }
-
-  public Set<String> getRedisKeys(String token) throws Exception {
-    LOGGER.info("In getRedisKeys method: ");
-
-    String ssoToken = token.substring(7);
-
-    if (!validateToken(ssoToken)) throw new Exception("Invalid token");
-
-    return redisTemplate.keys("bumblebee*");
-  }
-
-  public void deleteRedisKeys(String token) throws Exception {
-    LOGGER.info("In deleteRedisKeys method: ");
-    String ssoToken = token.substring(7);
-
-    if (!validateToken(ssoToken)) throw new Exception("Invalid token");
-
-    Set<String> keys = redisTemplate.keys("bumblebee*");
-
-    redisTemplate.delete(keys);
   }
 }

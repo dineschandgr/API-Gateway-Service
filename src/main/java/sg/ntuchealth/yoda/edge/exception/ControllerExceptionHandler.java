@@ -101,7 +101,7 @@ public class ControllerExceptionHandler {
         LoginResponse.builder()
             .success(false)
             .message("Error in Client Profile Creation")
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .statusCode(StatusCodes.GENERIC_ERROR.getCode())
             .build(),
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -113,7 +113,7 @@ public class ControllerExceptionHandler {
         LoginResponse.builder()
             .success(false)
             .message(GENERIC_ERROR)
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .statusCode(StatusCodes.GENERIC_ERROR.getCode())
             .build(),
         HttpStatus.INTERNAL_SERVER_ERROR);
   }

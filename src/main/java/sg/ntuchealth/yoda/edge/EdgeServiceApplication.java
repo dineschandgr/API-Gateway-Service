@@ -2,7 +2,6 @@ package sg.ntuchealth.yoda.edge;
 
 import java.util.Arrays;
 import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,131 +25,225 @@ import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableDiscoveryClient
 public class EdgeServiceApplication {
 
-	@Value("${redis.host}")
-	private String REDIS_HOST;
+  @Value("${redis.host}")
+  private String REDIS_HOST;
 
-	@Value("${redis.port}")
-	private Integer REDIS_PORT;
+  @Value("${redis.port}")
+  private Integer REDIS_PORT;
 
-	public static void main(String[] args) {
-		SpringApplication.run(EdgeServiceApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(EdgeServiceApplication.class, args);
+  }
 
-	@Bean
-	public RouteLocator routeLocator(RouteLocatorBuilder builder) {
-		return builder.routes().route(r -> r.path("/profile/**").uri("lb://profile-service"))
-				.route(r -> r.path("/lovedone/**").uri("lb://profile-service"))
-				.route(r -> r.path("/cart/**").uri("lb://cart-service"))
-				.route(r -> r.path("/order/**").uri("lb://cart-service"))
-				.route(r -> r.path("/config/mastercode/**").and().method(HttpMethod.GET)
-						.uri("lb://configuration-service"))
-				.route(r -> r.path("/products/category").and().method(HttpMethod.GET).uri("lb://membership-service"))
-				.route(r -> r.path("/products/category/{category}").and().method(HttpMethod.GET)
-						.uri("lb://membership-service"))
-				.route(r -> r.path("/products/category/{category}/{subcategory}").and().method(HttpMethod.GET)
-						.uri("lb://membership-service"))
-				.route(r -> r.path("/products/{id}/centers/list").and().method(HttpMethod.GET)
-						.uri("lb://membership-service"))
-				.route(r -> r.path("/products/v2/{id}/events").and().method(HttpMethod.GET)
-						.uri("lb://membership-service"))
-				.route(r -> r.path("/groups/v2/{id}").and().method(HttpMethod.GET).uri("lb://organization-service"))
-				.route(r -> r.path("/products-ext/{id}/offerings/list").and().method(HttpMethod.GET)
-						.uri("lb://subscription-service"))
-				.route(r -> r.path("/products/v2/{id}").and().method(HttpMethod.GET).uri("lb://membership-service"))
-				.route(r -> r.path("/intake").uri("lb://booking-service"))
-				.route(r -> r.path("/intake/{id}/sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
-				.route(r -> r.path("/intake/enroll").uri("lb://booking-service"))
-				.route(r -> r.path("/intake/enroll/{intake}").uri("lb://booking-service"))
-				.route(r -> r.path("/yoda-sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
-				.route(r -> r.path("/yoda-sessions/schedule").and().method(HttpMethod.POST).uri("lb://booking-service"))
-				.route(r -> r.path("/yoda-sessions/review").and().method(HttpMethod.POST).uri("lb://booking-service"))
-				.route(r -> r.path("/yoda-sessions/reschedule").and().method(HttpMethod.PUT)
-						.uri("lb://booking-service"))
-				.route(r -> r.path("/yoda-sessions/cancel").and().method(HttpMethod.PUT).uri("lb://booking-service"))
-				.route(r -> r.path("/subscriptions/{id}/next").and().method(HttpMethod.GET)
-						.uri("lb://subscription-service"))
-				.route(r -> r.path("/services").and().method(HttpMethod.GET).uri("lb://subscription-service"))
-				.route(r -> r.path("/services/sessions").and().method(HttpMethod.GET).uri("lb://subscription-service"))
-				.route(r -> r.path("/groups/locations").and().method(HttpMethod.POST).uri("lb://organization-service"))
-				.route(r -> r.path("/products/list").and().method(HttpMethod.POST).uri("lb://membership-service"))
-				.route(r -> r.path("/appointment").and().method(HttpMethod.GET).uri("lb://membership-service"))
-				.route(r -> r.path("/payment/dbs-pay").and().method(HttpMethod.POST).uri("lb://dbs-icn-mock-service"))
-				.route(r -> r.path("/attachments").and().method(HttpMethod.GET).uri("lb://attachment-service")).build();
-	}
+  @Bean
+  public RouteLocator routeLocator(RouteLocatorBuilder builder) {
+    return builder
+        .routes()
+        .route(r -> r.path("/profile/**").uri("lb://profile-service"))
+        .route(r -> r.path("/lovedone/**").uri("lb://profile-service"))
+        .route(r -> r.path("/cart/**").uri("lb://cart-service"))
+        .route(r -> r.path("/order/**").uri("lb://cart-service"))
+        .route(
+            r ->
+                r.path("/config/mastercode/**")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://configuration-service"))
+        .route(
+            r ->
+                r.path("/products/category")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/category/{category}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/category/{category}/{subcategory}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/{id}/centers/list")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/products/v2/{id}/events")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/groups/v2/{id}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://organization-service"))
+        .route(
+            r ->
+                r.path("/products-ext/{id}/offerings/list")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
+        .route(
+            r ->
+                r.path("/products/v2/{id}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://membership-service"))
+        .route(r -> r.path("/intake").uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/intake/{id}/sessions")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://booking-service"))
+        .route(r -> r.path("/intake/enroll").uri("lb://booking-service"))
+        .route(r -> r.path("/intake/enroll/{intake}").uri("lb://booking-service"))
+        .route(
+            r -> r.path("/yoda-sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/yoda-sessions/schedule")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/yoda-sessions/review")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/yoda-sessions/reschedule")
+                    .and()
+                    .method(HttpMethod.PUT)
+                    .uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/yoda-sessions/cancel")
+                    .and()
+                    .method(HttpMethod.PUT)
+                    .uri("lb://booking-service"))
+        .route(
+            r ->
+                r.path("/subscriptions/{id}/next")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
+        .route(
+            r -> r.path("/services").and().method(HttpMethod.GET).uri("lb://subscription-service"))
+        .route(
+            r ->
+                r.path("/services/sessions")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
+        .route(
+            r ->
+                r.path("/groups/locations")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://organization-service"))
+        .route(
+            r ->
+                r.path("/products/list")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://membership-service"))
+        .route(
+            r -> r.path("/appointment").and().method(HttpMethod.GET).uri("lb://membership-service"))
+        .route(
+            r ->
+                r.path("/payment/dbs-pay")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://dbs-icn-mock-service"))
+        .route(
+            r -> r.path("/attachments").and().method(HttpMethod.GET).uri("lb://attachment-service"))
+        .build();
+  }
 
-	@Bean
-	@LoadBalanced
-	public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
-		return new RestTemplate(factory);
-	}
+  @Bean
+  @LoadBalanced
+  public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
+    return new RestTemplate(factory);
+  }
 
-	@Bean
-	public RestTemplate restTemplateNoLB(ClientHttpRequestFactory factory) {
-		return new RestTemplate(factory);
-	}
+  @Bean
+  public RestTemplate restTemplateNoLB(ClientHttpRequestFactory factory) {
+    return new RestTemplate(factory);
+  }
 
-	@Bean
-	public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-		factory.setConnectTimeout(5000);
-		factory.setReadTimeout(5000);
-		return factory;
-	}
+  @Bean
+  public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
+    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+    factory.setConnectTimeout(5000);
+    factory.setReadTimeout(5000);
+    return factory;
+  }
 
-	@Bean
-	@LoadBalanced
-	public WebClient.Builder loadBalancedWebClientBuilder() {
-		return WebClient.builder();
-	}
+  @Bean
+  @LoadBalanced
+  public WebClient.Builder loadBalancedWebClientBuilder() {
+    return WebClient.builder();
+  }
 
-	@Profile({ "alpha", "uat" })
-	@Bean
-	public CorsWebFilter corsWebFilter() {
+  @Profile({"alpha", "uat"})
+  @Bean
+  public CorsWebFilter corsWebFilter() {
 
-		final CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOrigins(Collections.singletonList("*"));
-		corsConfig.setMaxAge(3600L);
-		corsConfig.setAllowedMethods(Arrays.asList("*"));
-		corsConfig.addAllowedHeader("*");
+    final CorsConfiguration corsConfig = new CorsConfiguration();
+    corsConfig.setAllowedOrigins(Collections.singletonList("*"));
+    corsConfig.setMaxAge(3600L);
+    corsConfig.setAllowedMethods(Arrays.asList("*"));
+    corsConfig.addAllowedHeader("*");
 
-		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", corsConfig);
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", corsConfig);
 
-		return new CorsWebFilter(source);
-	}
+    return new CorsWebFilter(source);
+  }
 
-	@Profile({ "prod" })
-	@Bean
-	public CorsWebFilter prodCorsWebFilter() {
+  @Profile({"prod"})
+  @Bean
+  public CorsWebFilter prodCorsWebFilter() {
 
-		final CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOrigins(Collections.singletonList("*"));
-		corsConfig.setMaxAge(3600L);
-		corsConfig.setAllowedOrigins(Arrays.asList("https://my.ntuchealth.sg"));
-		corsConfig.setAllowCredentials(true);
-		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+    final CorsConfiguration corsConfig = new CorsConfiguration();
+    corsConfig.setAllowedOrigins(Arrays.asList("https://my.ntuchealth.sg"));
+    corsConfig.setMaxAge(3600L);
+    corsConfig.setAllowedMethods(Arrays.asList("*"));
+    corsConfig.setAllowCredentials(true);
+    corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 
-		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", corsConfig);
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", corsConfig);
 
-		return new CorsWebFilter(source);
-	}
+    return new CorsWebFilter(source);
+  }
 
-	@Bean
-	public JedisConnectionFactory jedisConnectionFactory() {
-		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(REDIS_HOST, REDIS_PORT);
-		return new JedisConnectionFactory(config);
-	}
+  @Bean
+  public JedisConnectionFactory jedisConnectionFactory() {
+    RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(REDIS_HOST, REDIS_PORT);
+    return new JedisConnectionFactory(config);
+  }
 
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate() {
-		RedisTemplate<String, Object> template = new RedisTemplate<>();
-		template.setConnectionFactory(jedisConnectionFactory());
-		template.setKeySerializer(new StringRedisSerializer());
-		return template;
-	}
+  @Bean
+  public RedisTemplate<String, Object> redisTemplate() {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(jedisConnectionFactory());
+    template.setKeySerializer(new StringRedisSerializer());
+    return template;
+  }
 }

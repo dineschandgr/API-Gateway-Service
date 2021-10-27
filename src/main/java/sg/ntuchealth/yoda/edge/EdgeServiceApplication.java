@@ -47,6 +47,7 @@ public class EdgeServiceApplication {
         .route(r -> r.path("/lovedone/**").uri("lb://profile-service"))
         .route(r -> r.path("/cart/**").uri("lb://cart-service"))
         .route(r -> r.path("/order/**").uri("lb://cart-service"))
+        .route(r -> r.path("/linkpay/**").uri("lb://payment-service"))
         .route(
             r ->
                 r.path("/config/mastercode/**")

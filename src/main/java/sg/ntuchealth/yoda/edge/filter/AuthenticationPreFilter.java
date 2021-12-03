@@ -57,6 +57,7 @@ public class AuthenticationPreFilter implements GlobalFilter {
                     .mutate()
                     .header("AssociationId", client.getAssociationID())
                     .header("ClientId", String.valueOf(b3Token.getClientId()))
+                    .header("SsoUid", client.getId())
                     .header(AUTHORIZATION, "Bearer " + b3Token.getAccessToken())
                     .build())
             .build());

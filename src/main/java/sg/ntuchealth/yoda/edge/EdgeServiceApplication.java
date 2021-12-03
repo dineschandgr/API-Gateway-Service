@@ -47,6 +47,7 @@ public class EdgeServiceApplication {
         .route(r -> r.path("/lovedone/**").uri("lb://profile-service"))
         .route(r -> r.path("/cart/**").uri("lb://cart-service"))
         .route(r -> r.path("/order/**").uri("lb://cart-service"))
+        .route(r -> r.path("/linkpay/**").uri("lb://payment-service"))
         .route(
             r ->
                 r.path("/config/mastercode/**")
@@ -172,6 +173,12 @@ public class EdgeServiceApplication {
                     .uri("lb://dbs-icn-mock-service"))
         .route(
             r -> r.path("/attachments").and().method(HttpMethod.GET).uri("lb://attachment-service"))
+        .route(
+            r ->
+                r.path("/subscriptions/rewards/{id}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://subscription-service"))
         .build();
   }
 

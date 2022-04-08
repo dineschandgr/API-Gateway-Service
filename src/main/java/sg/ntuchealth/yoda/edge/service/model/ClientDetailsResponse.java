@@ -1,30 +1,23 @@
 package sg.ntuchealth.yoda.edge.service.model;
 
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientLoginResponse {
+public class ClientDetailsResponse {
 
   private UUID id;
 
-  private UUID clientId;
+  private String name;
 
-  private String ssoUid;
-
-  private boolean associated;
-
-  private String clientName;
-
-  private String clientEmail;
-
-  private boolean admin;
+  private String email;
 }

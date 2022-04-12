@@ -215,7 +215,8 @@ public class EdgeServiceApplication {
     corsConfig.setAllowedOrigins(Collections.singletonList("*"));
     corsConfig.setMaxAge(3600L);
     corsConfig.setAllowedMethods(Arrays.asList("*"));
-    corsConfig.addAllowedHeader("*");
+    //corsConfig.addAllowedHeader("*");
+    corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "view-as"));
 
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", corsConfig);
@@ -232,7 +233,7 @@ public class EdgeServiceApplication {
     corsConfig.setMaxAge(3600L);
     corsConfig.setAllowedMethods(Arrays.asList("*"));
     corsConfig.setAllowCredentials(true);
-    corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+    corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "view-as"));
 
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", corsConfig);

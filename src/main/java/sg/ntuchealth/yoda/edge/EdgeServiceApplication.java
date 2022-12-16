@@ -192,6 +192,7 @@ public class EdgeServiceApplication {
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://membership-service"))
+        .route(r -> r.path("/gst-configuration/**").uri("lb://billing-service"))
         .build();
   }
 

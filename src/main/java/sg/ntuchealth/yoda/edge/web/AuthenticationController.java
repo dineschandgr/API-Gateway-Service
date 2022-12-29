@@ -6,14 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sg.ntuchealth.yoda.edge.repo.model.B3Token;
 import sg.ntuchealth.yoda.edge.service.AuthenticationService;
-import sg.ntuchealth.yoda.edge.service.B3TokenService;
 import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
 
 @RestController
@@ -21,8 +18,6 @@ import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
 public class AuthenticationController {
 
   @Autowired private AuthenticationService authenticationService;
-
-  @Autowired private B3TokenService b3TokenService;
 
   /*
   Validiate the JWT received from SSO
@@ -48,11 +43,5 @@ public class AuthenticationController {
 
     // TODO: 5/8/21 // blacklist the JWT on logout
     return null;
-  }
-
-  @GetMapping("validate/{id}")
-  public ResponseEntity<B3Token> validate(@PathVariable(value = "id") String id) {
-
-    return ResponseEntity.ok(b3TokenService.retrieveAccessToken(id));
   }
 }

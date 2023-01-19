@@ -31,6 +31,9 @@ public class ClientService {
 
   public int validateClientAndGenerateB3Token(Client client) throws JsonProcessingException {
     ResponseEntity<ClientLoginResponse> profileResponseEntity = null;
+
+    LOGGER.info("Logged in client id: {}, client: {} ", client.getId(), client);
+
     int statusCode;
 
     if (!StringUtils.isEmpty(client.getAssociationID())) {

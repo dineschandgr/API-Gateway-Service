@@ -54,16 +54,16 @@
 
 	<springProfile name="uat">	
 		<logger
-			name="sg.ntuchealth.yoda.edge" level="INFO"/>
+			name="sg.ntuchealth.yoda.edge" level="DEBUG"/>
 	</springProfile>
 
 	<springProfile name="prod">
 		<logger
-			name="sg.ntuchealth.yoda.edge" level="INFO"/>
+			name="sg.ntuchealth.yoda.edge" level="DEBUG"/>
 	</springProfile>
 
 	<logger
-		name="org.springframework.*" level="INFO"/>
+		name="org.springframework.*" level="DEBUG"/>
 		
 	<logger
 		name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener"

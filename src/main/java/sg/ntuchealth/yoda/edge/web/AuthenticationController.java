@@ -2,6 +2,8 @@ package sg.ntuchealth.yoda.edge.web;
 
 import com.auth0.jwk.JwkException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import sg.ntuchealth.yoda.edge.service.model.LoginResponse;
 @RequestMapping("auth")
 public class AuthenticationController {
 
+  private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
   @Autowired private AuthenticationService authenticationService;
 
   /*
@@ -25,6 +29,8 @@ public class AuthenticationController {
   @PostMapping("validate")
   public ResponseEntity<LoginResponse> login(@RequestHeader(value = "Authorization") String token)
       throws JwkException, JsonProcessingException {
+
+    LOGGER.info("Client logged in token : {} ", token);
 
     int clientStatusCode = authenticationService.authenticateClient(token);
 

@@ -1,5 +1,6 @@
 package sg.ntuchealth.yoda.edge.service;
 
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,6 @@ import sg.ntuchealth.yoda.edge.repo.model.B3Token;
 import sg.ntuchealth.yoda.edge.service.model.ClientDetailsResponse;
 import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
 import sg.ntuchealth.yoda.edge.util.JWTUtil;
-
-import java.util.UUID;
 
 @Service
 public class B3TokenService {
@@ -53,10 +52,19 @@ public class B3TokenService {
   }
 
   public B3Token retrieveAccessToken(String associationId) {
-    LOGGER.info("In retrieveAccessToken method: ");
-    return b3TokenRepository
-        .findById(B3_TOKEN + associationId)
-        .orElseThrow(() -> new B3TokenNotFoundException("B3 Access Token not found in cache"));
+    LOGGER.info("In retrieveAccessToken method associationId : {} ", associationId);
+
+    B3Token b3Token =
+        b3TokenRepository
+            .findById(B3_TOKEN + associationId)
+            .orElseThrow(() -> new B3TokenNotFoundException("B3 Access Token not found in cache"));
+
+    LOGGER.info(
+        "B3Token from Cache is  b3Token.clientID: {}, b3Token: {} ",
+        b3Token.getClientId(),
+        b3Token);
+
+    return b3Token;
   }
 
   public B3Token generateToken(ClientLoginResponse clientLoginResponse) {
@@ -75,13 +83,13 @@ public class B3TokenService {
     LOGGER.info("In generateViewAsToken method: {} ", clientId);
     ClientDetailsResponse clientDetails = this.getClientDetails(clientId);
 
-    String accessToken = jwtUtil.generateToken(
-        ClientLoginResponse.builder()
-            .clientId(clientDetails.getId())
-            .clientName(clientDetails.getName())
-            .clientEmail(clientDetails.getEmail())
-            .build()
-    );
+    String accessToken =
+        jwtUtil.generateToken(
+            ClientLoginResponse.builder()
+                .clientId(clientDetails.getId())
+                .clientName(clientDetails.getName())
+                .clientEmail(clientDetails.getEmail())
+                .build());
     Long expirationSeconds = Long.parseLong(expirationTime) / 1000;
     return B3Token.builder()
         .id(B3_TOKEN + clientDetails.getId())
@@ -106,7 +114,7 @@ public class B3TokenService {
               HTTP_CLIENT_SERVICE_APPLICABLE + "/" + id, ClientDetailsResponse.class);
       return clientDetails.getBody();
     } catch (HttpClientErrorException e) {
-      LOGGER.error("Client not found with ID: " + clientId , e);
+      LOGGER.error("Client not found with ID: " + clientId, e);
       throw e;
     }
   }

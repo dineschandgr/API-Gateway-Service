@@ -9,12 +9,10 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import sg.ntuchealth.yoda.edge.common.StatusCodes;
-import sg.ntuchealth.yoda.edge.exception.B3TokenNotFoundException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AssocationNotFoundGlobalException;
 import sg.ntuchealth.yoda.edge.filter.exceptions.AuthorizationGlobalException;
 import sg.ntuchealth.yoda.edge.repo.model.B3Token;
@@ -50,17 +48,22 @@ public class AuthenticationPreFilter implements GlobalFilter {
 
     Client client = jwtUtil.validateTokenAndRetrieveUser(token);
 
-    LOGGER.info("Token Validation successful and request is being routed");
+    LOGGER.info("Token Validation successful and request is being routed client info: {} ", client);
 
     validateUserAssociation(client);
 
     // View-as feature is only enabled for admin
     // Requests will be associated with UUID specified in view-as header
     if (request.getHeaders().containsKey(VIEW_AS)) {
-      ClientLoginResponse clientProfile = profileService.validateUser(client.getAssociationID()).getBody();
+      LOGGER.info("Inside View AS");
+      ClientLoginResponse clientProfile =
+          profileService.validateUser(client.getAssociationID()).getBody();
       if (clientProfile.isAdmin()) {
         String viewAsClientId = request.getHeaders().getFirst(VIEW_AS);
+
         B3Token b3Token = b3TokenService.retrieveViewAsAccessToken(viewAsClientId);
+        LOGGER.info("View AS B3 Token: {} ", b3Token);
+
         return chain.filter(
             exchange
                 .mutate()
@@ -77,6 +80,11 @@ public class AuthenticationPreFilter implements GlobalFilter {
     }
 
     B3Token b3Token = b3TokenService.retrieveAccessToken(client.getAssociationID());
+    LOGGER.info(
+        "associationId: {}, b3Token : {}, client id {} ",
+        client.getAssociationID(),
+        b3Token,
+        b3Token.getClientId());
     return chain.filter(
         exchange
             .mutate()

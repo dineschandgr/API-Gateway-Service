@@ -11,6 +11,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Calendar;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -37,6 +39,8 @@ public class TokenUtil {
   private JwkProvider provider;
 
   private DecodedJWT jwt;
+
+  private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
   @PostConstruct
   private void postConstruct() {
@@ -68,10 +72,15 @@ public class TokenUtil {
 
   public Client retrieveUserFromToken() {
 
-    return Client.builder()
-        .id(jwt.getClaim(uid).asString())
-        .associationID(jwt.getClaim(associationID).asString())
-        .build();
+    Client client =
+        Client.builder()
+            .id(jwt.getClaim(uid).asString())
+            .associationID(jwt.getClaim(associationID).asString())
+            .build();
+
+    LOGGER.info("Retrieve User from SSO Token : {} ", client);
+
+    return client;
   }
 
   public Boolean validateAudience(DecodedJWT jwt) {

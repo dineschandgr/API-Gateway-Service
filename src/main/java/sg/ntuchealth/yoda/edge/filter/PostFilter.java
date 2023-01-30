@@ -54,7 +54,8 @@ public class PostFilter {
                                 String.class,
                                 (webExchange, originalBody) -> {
                                   if (originalBody != null) {
-                                    LOGGER.debug("Response body {}", originalBody);
+                                    LOGGER.debug(
+                                        "Response body after profile linking {}", originalBody);
                                     try {
                                       ProfileLinkingResponse profileLinkingResponse =
                                           objectMapper.readValue(
@@ -79,6 +80,24 @@ public class PostFilter {
                                   } else {
                                     return Mono.empty();
                                   }
+                                }))
+                    .uri("lb://profile-service"))
+        .route(
+            r ->
+                r.path("/profile/**")
+                    .and()
+                    .method(HttpMethod.GET) // your own path filter
+                    .filters(
+                        f ->
+                            f.modifyResponseBody(
+                                String.class,
+                                String.class,
+                                (webExchange, originalBody) -> {
+                                  if (originalBody != null) {
+                                    LOGGER.debug(
+                                        "Response body get profile api is {}", originalBody);
+                                  }
+                                  return null;
                                 }))
                     .uri("lb://profile-service"))
         .build();

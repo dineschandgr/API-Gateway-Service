@@ -38,8 +38,6 @@ public class TokenUtil {
 
   private JwkProvider provider;
 
-  private DecodedJWT jwt;
-
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
   @PostConstruct
@@ -51,10 +49,10 @@ public class TokenUtil {
 
     String ssoToken = token.substring(7);
 
-    jwt = JWT.decode(ssoToken);
+    DecodedJWT jwt = JWT.decode(ssoToken);
 
     // Check expiration
-    if (isTokenExpired())
+    if (isTokenExpired(jwt))
       throw new TokenExpiredGlobalException(
           HttpStatus.UNAUTHORIZED, StatusCodes.TOKEN_EXPIRED.getMessage());
 
@@ -67,10 +65,10 @@ public class TokenUtil {
     Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
     algorithm.verify(jwt);
 
-    return retrieveUserFromToken();
+    return retrieveUserFromToken(jwt);
   }
 
-  public Client retrieveUserFromToken() {
+  public Client retrieveUserFromToken(DecodedJWT jwt) {
 
     Client client =
         Client.builder()
@@ -93,7 +91,7 @@ public class TokenUtil {
     return count > 0;
   }
 
-  public boolean isTokenExpired() {
+  public boolean isTokenExpired(DecodedJWT jwt) {
     return jwt.getExpiresAt().before(Calendar.getInstance().getTime());
   }
 }

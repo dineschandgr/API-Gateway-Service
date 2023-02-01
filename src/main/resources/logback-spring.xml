@@ -5,7 +5,7 @@
 	<!-- Pattern should be shorter since we don't need full year, timezone, 
 		complete Request IDs, service/host name, etc. -->
 	<property name="PATTERN"
-		value="%magenta(%date{yy-MM-dd'T'HH:mm:ss.SSS}) %highlight(%-5level) %green(%10.10thread) %yellow([%-0.-8mdc{X-Request-Id:--}]) %cyan(%logger{5}) - %msg%n" />
+			  value="%magenta(%date{yy-MM-dd'T'HH:mm:ss.SSS}) %highlight(%-5level) %green(%10.10thread) %yellow([%-0.-8mdc{X-Request-Id:--}, %X{traceId:-}, %X{spanId:-}]) %cyan(%logger{5}) - %msg%n" />
 	<!-- no /data directory there! -->
 	<property name="FILE_PATH" value="${app_home}/logs/app.log" />
 	<property name="ROLLING_FILENAME_PATTERN"

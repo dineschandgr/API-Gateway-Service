@@ -1,16 +1,19 @@
 package sg.ntuchealth.yoda.edge;
 
+import com.amazonaws.services.sns.AmazonSNS;
 import java.util.Arrays;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -27,6 +30,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableDiscoveryClient
+@ImportResource("classpath:aws-config.xml")
 public class Application {
 
   @Value("${redis.host}")
@@ -398,6 +402,12 @@ public class Application {
             r -> r.path("/yoda-sessions").and().method(HttpMethod.GET).uri("lb://booking-service"))
         .route(
             r ->
+                r.path("/yoda-sessions/vacant-slots")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://booking-service"))
+        .route(
+            r ->
                 r.path("/yoda-sessions/schedule")
                     .and()
                     .method(HttpMethod.POST)
@@ -550,5 +560,10 @@ public class Application {
     template.setConnectionFactory(jedisConnectionFactory());
     template.setKeySerializer(new StringRedisSerializer());
     return template;
+  }
+
+  @Bean
+  public NotificationMessagingTemplate notificationMessagingTemplate(AmazonSNS amazonSNS) {
+    return new NotificationMessagingTemplate(amazonSNS);
   }
 }

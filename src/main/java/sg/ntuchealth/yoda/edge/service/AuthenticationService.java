@@ -1,7 +1,7 @@
 package sg.ntuchealth.yoda.edge.service;
 
 import com.auth0.jwk.JwkException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class AuthenticationService {
 
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-  public int authenticateClient(String token) throws JwkException, JsonProcessingException {
+  public int authenticateClient(String token) throws JwkException, IOException {
 
     String ssoToken = token.substring(7);
 

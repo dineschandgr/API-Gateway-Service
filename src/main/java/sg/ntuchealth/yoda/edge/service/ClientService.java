@@ -1,6 +1,8 @@
 package sg.ntuchealth.yoda.edge.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,12 @@ public class ClientService {
 
   @Autowired private B3TokenService b3TokenService;
 
+  @Autowired
+  private ApplicationAnalyticsEventNotificationService applicationAnalyticsEventNotificationService;
+
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-  public int validateClientAndGenerateB3Token(Client client) throws JsonProcessingException {
+  public int validateClientAndGenerateB3Token(Client client) throws IOException {
     ResponseEntity<ClientLoginResponse> profileResponseEntity = null;
 
     LOGGER.info("Logged in client id: {}, client: {} ", client.getId(), client);
@@ -51,10 +56,24 @@ public class ClientService {
       LOGGER.info("Client Association does not exist in the DB. calling LinkID Bridge APIs");
       profileResponseEntity = createUserAndSaveAssociation(client);
       statusCode = StatusCodes.NEW_USER.getCode();
+
+      try {
+        processNewUserSignUpEventNotification(profileResponseEntity);
+      } catch (Exception e) {
+        LOGGER.error("Error while sending application analytics to SNS ", e);
+      }
     }
 
     b3TokenService.generateAndSaveAccessToken(profileResponseEntity.getBody());
     return statusCode;
+  }
+
+  private void processNewUserSignUpEventNotification(
+      ResponseEntity<ClientLoginResponse> profileResponseEntity) {
+    Optional<ClientLoginResponse> loginResponse =
+        Optional.ofNullable(profileResponseEntity.getBody());
+    applicationAnalyticsEventNotificationService.sendNewUserSignUpEventNotification(
+        loginResponse.isPresent() ? loginResponse.get().getClientId() : null);
   }
 
   public ResponseEntity<ClientLoginResponse> createUserAndSaveAssociation(Client client)

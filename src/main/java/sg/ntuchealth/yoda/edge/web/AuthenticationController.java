@@ -1,7 +1,7 @@
 package sg.ntuchealth.yoda.edge.web;
 
 import com.auth0.jwk.JwkException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class AuthenticationController {
   */
   @PostMapping("validate")
   public ResponseEntity<LoginResponse> login(@RequestHeader(value = "Authorization") String token)
-      throws JwkException, JsonProcessingException {
+      throws JwkException, IOException {
 
     LOGGER.info("Client logged in token : {} ", token);
 

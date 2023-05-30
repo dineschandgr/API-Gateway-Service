@@ -15,21 +15,6 @@ cloud:
   aws:
     stack:
       auto: false
-
-springdoc:
-  enable-native-support: true
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    config-url: /v3/api-docs/swagger-config
-    urls:
-      - url: /v3/api-docs
-        name: Gateway Service
-        primaryName: Gateway Service
-      - url: /profile-service/v3/api-docs
-        name: Profile Service
-        primaryName: Profile Service
 ---
 
 spring:
@@ -59,38 +44,6 @@ redis:
   host: localhost
   port: 6379
 
-openapi:
-  service:
-    gateway-url: https://api.alpha.app.ntuchealth.cloud
-
----
-spring:
-  profiles: alpha
-
-openapi:
-  service:
-    gateway-url: https://api.alpha.app.ntuchealth.cloud
----
-spring:
-  profiles: uat
-
-springdoc:
-  swagger-ui:
-    enabled: false
-  api-docs:
-    enabled: false
-
----
-spring:
-  profiles: prod
-
-springdoc:
-  swagger-ui:
-    enabled: false
-  api-docs:
-    enabled: false
-
----
 sns:
   topic:
     application-analytics-event: dev-application-analytics-event-topic

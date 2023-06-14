@@ -1,5 +1,6 @@
 package sg.ntuchealth.yoda.edge.service;
 
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import sg.ntuchealth.yoda.edge.service.model.ClientLoginResponse;
 import sg.ntuchealth.yoda.edge.service.model.ClientProfile;
 import sg.ntuchealth.yoda.edge.service.model.ProfileCreateRequest;
 
-import java.util.UUID;
-
 @Service
 public class ProfileService {
 
@@ -26,11 +25,14 @@ public class ProfileService {
 
   @Autowired private RestTemplate restTemplate;
 
-  public ResponseEntity<ClientLoginResponse> validateUser(String associationId) {
+  public ResponseEntity<ClientLoginResponse> validateAndSaveLastLoginTime(String associationId) {
     UUID id = UUID.fromString(associationId);
     LOGGER.info("ProfileService validateUser id: {}", id);
-    return restTemplate.getForEntity(
-        HTTP_CLIENT_SERVICE_APPLICABLE + "/login/" + id, ClientLoginResponse.class);
+    return restTemplate.exchange(
+        HTTP_CLIENT_SERVICE_APPLICABLE + "/login/" + id,
+        HttpMethod.PUT,
+        null,
+        ClientLoginResponse.class);
   }
 
   public ResponseEntity<ClientLoginResponse> createUserProfile(ClientProfile clientProfile) {
@@ -53,8 +55,8 @@ public class ProfileService {
         HTTP_CLIENT_SERVICE_APPLICABLE + "/association/" + uid, String.class);
   }
 
-  public void updateAssociation(String uid) {
-    LOGGER.info("ProfileService updateAssociation id: {}", uid);
+  public void updateAssociationAndSaveLastLoginTime(String uid) {
+    LOGGER.info("ProfileService updateAssociationAndSaveLastLoginTime id: {}", uid);
 
     HttpHeaders headers = CommonUtils.getJsonRequestResponseHeaders();
     AssociationUpdateRequest req = AssociationUpdateRequest.builder().associated(true).build();

@@ -57,7 +57,7 @@ public class AuthenticationPreFilter implements GlobalFilter {
     if (request.getHeaders().containsKey(VIEW_AS)) {
       LOGGER.info("Inside View AS");
       ClientLoginResponse clientProfile =
-          profileService.validateUser(client.getAssociationID()).getBody();
+          profileService.validateAndSaveLastLoginTime(client.getAssociationID()).getBody();
       if (clientProfile.isAdmin()) {
         String viewAsClientId = request.getHeaders().getFirst(VIEW_AS);
 

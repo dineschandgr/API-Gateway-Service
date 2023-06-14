@@ -42,7 +42,8 @@ public class ClientService {
     int statusCode;
 
     if (!StringUtils.isEmpty(client.getAssociationID())) {
-      profileResponseEntity = profileService.validateUser(client.getAssociationID());
+      profileResponseEntity =
+          profileService.validateAndSaveLastLoginTime(client.getAssociationID());
       LOGGER.info("Existing client Login flow");
 
       if (!profileResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
@@ -97,7 +98,7 @@ public class ClientService {
         }
 
         // Save Association Entry in Client_Login table
-        profileService.updateAssociation(client.getId());
+        profileService.updateAssociationAndSaveLastLoginTime(client.getId());
       }
       LOGGER.info(
           "Response from linkIDBridgeService.saveAssociation is : {} ", clientResponseEntity);

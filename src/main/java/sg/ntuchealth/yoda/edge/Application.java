@@ -69,6 +69,12 @@ public class Application {
                     .uri("lb://profile-service"))
         .route(
             r ->
+                r.path("/profile/nric/{nric}")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://profile-service"))
+        .route(
+            r ->
                 r.path("/profile/address/{addressid}")
                     .and()
                     .method(HttpMethod.GET)
@@ -484,6 +490,56 @@ public class Application {
                     .and()
                     .method(HttpMethod.GET)
                     .uri("lb://billing-service"))
+        .route(
+            r ->
+                r.path("/egiro-mock/create/trigger")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://dbs-icn-mock-service"))
+        .route(
+            r ->
+                r.path("/egiro-mock/cancel/trigger")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://dbs-icn-mock-service"))
+        .route(
+            r ->
+                r.path("/egiro-mock/bank/banks")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://dbs-icn-mock-service"))
+        .route(
+            r ->
+                r.path("/egiro-mock/bank/banks")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://dbs-icn-mock-service"))
+        .route(
+            r -> r.path("/egiro/create").and().method(HttpMethod.POST).uri("lb://payment-service"))
+        .route(
+            r ->
+                r.path("/egiro/bank-list").and().method(HttpMethod.GET).uri("lb://payment-service"))
+        .route(
+            r -> r.path("/egiro/cancel").and().method(HttpMethod.POST).uri("lb://payment-service"))
+        .route(
+            r ->
+                r.path("/egiro/retrieve").and().method(HttpMethod.POST).uri("lb://payment-service"))
+        .route(
+            r -> r.path("/egiro/history").and().method(HttpMethod.GET).uri("lb://payment-service"))
+        .route(
+            r ->
+                r.path("/egiro/generateDDARefNo")
+                    .and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://payment-service"))
+        .route(
+            r -> r.path("/egiro/status").and().method(HttpMethod.POST).uri("lb://payment-service"))
+        .route(
+            r ->
+                r.path("/egiro/client/dependants")
+                    .and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://payment-service"))
         .build();
   }
 

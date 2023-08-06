@@ -591,7 +591,7 @@ public class Application {
   public CorsWebFilter prodCorsWebFilter() {
 
     final CorsConfiguration corsConfig = new CorsConfiguration();
-    corsConfig.setAllowedOrigins(Arrays.asList("https://my.ntuchealth.sg"));
+    corsConfig.setAllowedOrigins(Arrays.asList("*"));
     corsConfig.setMaxAge(3600L);
     corsConfig.setAllowedMethods(Arrays.asList("*"));
     corsConfig.setAllowCredentials(true);

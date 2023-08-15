@@ -14,12 +14,19 @@ public class ApplicationAnalyticsEventDto {
 
   @AllArgsConstructor
   public enum EventName {
-    NEW_SIGN_UP("new_sign_up"),
-    NEW_APPOINTMENT("new_appointment"),
-    RECURRING_APPOINTMENT("recurring_appointment"),
-    APPOINTMENT_ATTENDED("appointment_attended"),
-    APPOINTMENT_RESCHEDULE("appointment_reschedule"),
-    APPOINTMENT_NO_SHOW("appointment_no_show");
+    B3_NEW_USER_SIGN_UP("b3_new_user_sign_up"),
+    B3_NEW_APPOINTMENT("b3_new_appointment"),
+    B3_RECURRING_APPOINTMENT("b3_recurring_appointment"),
+    B3_APPOINTMENT_ATTENDED("b3_appointment_attended"),
+    B3_APPOINTMENT_RESCHEDULE("b3_appointment_reschedule"),
+    B3_APPOINTMENT_NO_SHOW("b3_appointment_no_show"),
+
+    MYNH_NEW_USER_SIGN_UP("mynh_new_user_sign_up"),
+    MYNH_NEW_APPOINTMENT("mynh_new_appointment"),
+    MYNH_RECURRING_APPOINTMENT("mynh_recurring_appointment"),
+    MYNH_APPOINTMENT_ATTENDED("mynh_appointment_attended"),
+    MYNH_APPOINTMENT_RESCHEDULE("mynh_appointment_reschedule"),
+    MYNH_APPOINTMENT_NO_SHOW("mynh_appointment_no_show");
 
     private String value;
   }

@@ -27,7 +27,7 @@ public class ApplicationAnalyticsEventNotificationService {
     notificationMessagingTemplate.sendNotification(
         applicationAnalyticsEventTopic,
         ApplicationAnalyticsEventDto.builder()
-            .eventName(ApplicationAnalyticsEventDto.EventName.NEW_SIGN_UP)
+            .eventName(ApplicationAnalyticsEventDto.EventName.MYNH_NEW_USER_SIGN_UP)
             .clientId(clientId)
             .build(),
         NEW_USER_SIGNUP_SNS_SUBJECT);

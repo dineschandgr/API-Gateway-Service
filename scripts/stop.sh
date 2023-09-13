@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-curl -X POST http://localhost:8080/actuator/shutdown
+kill $(lsof -t -i:8080)
 exit 0

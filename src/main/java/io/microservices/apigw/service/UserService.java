@@ -23,9 +23,9 @@ public class UserService implements ReactiveUserDetailsService {
   private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
   @Autowired private RestTemplate restTemplate;
-
-  @Autowired
-  private WebClient webClient;
+//
+//  @Autowired
+//  private WebClient webClient;
 
   public Mono<User> getUserDetails(String email) throws ExecutionException, InterruptedException {
 

@@ -4,7 +4,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* This repository is for the gateway service for yoda
+* This repository is for the gateway service for microservices
 * The gateway handles the client authentication
 * It is the single point of contact for the Front End clients and any requests to other services pass through this
 
